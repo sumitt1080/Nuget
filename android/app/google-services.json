@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "589034906695",
+    "project_id": "nuget-aed9d",
+    "storage_bucket": "nuget-aed9d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:589034906695:android:475cdbaa037c9421693d62",
+        "android_client_info": {
+          "package_name": "com.IITG.Nuget"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "589034906695-bf2deij5gprpnr80laqukokugqg3evk8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.IITG.Nuget",
+            "certificate_hash": "1bccf060783098f877556acdbcbbfdd71e6f6c46"
+          }
+        },
+        {
+          "client_id": "589034906695-j4k4of1fgjbm2b3bnu1ce7db1qfhvs61.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyArYqYpLUFIlXn5noYRVu7YToZdlqY9erE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "589034906695-j4k4of1fgjbm2b3bnu1ce7db1qfhvs61.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
