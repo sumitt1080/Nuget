@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:shifting_tabbar/shifting_tabbar.dart';
+import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 
 final GoogleSignIn googleSignIn = GoogleSignIn();
 
@@ -9,12 +11,13 @@ class Home extends StatefulWidget {
   _HomeState createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> {
+class _HomeState extends State<Home> with TickerProviderStateMixin {
   bool isAuth = false;
-
+  TabController _tabController;
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(vsync: this, length: 3);
     // Detects when user signed in
     googleSignIn.onCurrentUserChanged.listen((account) {
       handleSignIn(account);
@@ -51,9 +54,47 @@ class _HomeState extends State<Home> {
   }
 
   Widget buildAuthScreen() {
-    return RaisedButton(
-      child: Text('Logout'),
-      onPressed: logout,
+    return DefaultTabController(
+      length: 3,
+      child: Scaffold(
+        floatingActionButton: FloatingActionButton(
+            backgroundColor: Colors.purple,
+            hoverColor: Colors.green,
+            hoverElevation: 50.0,
+            child: Icon(Icons.add),
+            onPressed: () {
+              showModalBottomSheet<void>(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(25.0),
+                    ),
+                  ),
+                  isScrollControlled: true,
+                  context: context,
+                  builder: (BuildContext context) {
+                    return Container(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          TextFormField(
+                            decoration: const InputDecoration(
+                                hintText: 'Event Name', labelText: 'Event'),
+                          ),
+                        ],
+                      ),
+                    );
+                  });
+            }),
+        appBar: ShiftingTabBar(
+          controller: _tabController,
+          color: Color(0xFF0198E1),
+          tabs: [
+            ShiftingTab(icon: Icon(LineAwesomeIcons.list_ul), text: 'Task'),
+            ShiftingTab(icon: Icon(LineAwesomeIcons.fire), text: 'Feed'),
+            ShiftingTab(icon: Icon(LineAwesomeIcons.user_1), text: 'Clubs'),
+          ],
+        ),
+      ),
     );
   }
 
