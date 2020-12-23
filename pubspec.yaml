@@ -54,6 +54,7 @@ dependencies:
   shifting_tabbar: ^0.3.1
   line_awesome_icons: ^1.0.4+2
   date_time_picker: ^1.1.0
+  persistent_bottom_nav_bar: ^3.1.0
 
 dev_dependencies:
   flutter_test:

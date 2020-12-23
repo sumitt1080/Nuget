@@ -1,37 +1,40 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:nuget/models/profilemodal.dart';
+import 'package:nuget/models/user.dart';
+import 'package:nuget/pages/activity_feed.dart';
+import 'package:nuget/pages/create_account.dart';
+import 'package:nuget/pages/profile.dart';
+import 'package:nuget/pages/search.dart';
+import 'package:nuget/pages/timeline.dart';
+import 'package:nuget/pages/upload.dart';
 import 'package:shifting_tabbar/shifting_tabbar.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 final GoogleSignIn googleSignIn = GoogleSignIn();
+final usersRef = FirebaseFirestore.instance.collection('users');
+final DateTime timestamp = DateTime.now();
+User currentUser;
 
 class Home extends StatefulWidget {
   @override
   _HomeState createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> with TickerProviderStateMixin {
+class _HomeState extends State<Home> {
   bool isAuth = false;
-  TabController _tabController;
-
-  TextEditingController _controller2;
-  TextEditingController _controller3;
-  TextEditingController _controller4;
+  PageController pageController;
+  int pageIndex = 0;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(vsync: this, length: 3);
-
-    _controller2 = TextEditingController(text: DateTime.now().toString());
-    _controller3 = TextEditingController(text: DateTime.now().toString());
-
-    String lsHour = TimeOfDay.now().hour.toString().padLeft(2, '0');
-    String lsMinute = TimeOfDay.now().minute.toString().padLeft(2, '0');
-    _controller4 = TextEditingController(text: '$lsHour:$lsMinute');
+    buildNavBar(currentUser.profileType);
+    pageController = PageController();
     // Detects when user signed in
     googleSignIn.onCurrentUserChanged.listen((account) {
       handleSignIn(account);
@@ -48,7 +51,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
 
   handleSignIn(GoogleSignInAccount account) {
     if (account != null) {
-      print('User signed in!: $account');
+      createUserInFirestore();
       setState(() {
         isAuth = true;
       });
@@ -59,6 +62,48 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
     }
   }
 
+  createUserInFirestore() async {
+    // 1) check if user exists in users collection in database (according to their id)
+    final GoogleSignInAccount user = googleSignIn.currentUser;
+    DocumentSnapshot doc = await usersRef.doc(user.id).get();
+    //ProfileModal profile;
+    if (!doc.exists) {
+      // 2) if the user doesn't exist, then we want to take them to the create account page
+      ProfileModal profile = await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => CreateAccount(),
+        ),
+      );
+      print('--@--@--@');
+      print(profile.profiletype);
+      print('########');
+      print(profile.username);
+
+      // 3) get username from create account, use it to make new user document in users collection
+      usersRef.doc(user.id).set({
+        "id": user.id,
+        "username": profile.username,
+        "profileType": profile.profiletype,
+        "photoUrl": user.photoUrl,
+        "email": user.email,
+        "displayName": user.displayName,
+        "bio": "",
+        "timestamp": timestamp
+      });
+      doc = await usersRef.doc(user.id).get();
+    }
+    currentUser = User.fromDocument(doc);
+    print(currentUser);
+    print(currentUser.profileType);
+  }
+
+  @override
+  void dispose() {
+    pageController.dispose();
+    super.dispose();
+  }
+
   login() {
     googleSignIn.signIn();
   }
@@ -67,75 +112,140 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
     googleSignIn.signOut();
   }
 
-  Widget buildAuthScreen() {
-    return DefaultTabController(
-      length: 3,
-      child: Scaffold(
-        floatingActionButton: FloatingActionButton(
-            backgroundColor: Colors.purple,
-            hoverColor: Colors.green,
-            hoverElevation: 50.0,
-            child: Icon(Icons.add),
-            onPressed: () {
-              showModalBottomSheet<void>(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: new BorderRadius.only(
-                      topLeft: const Radius.circular(25.0),
-                      topRight: const Radius.circular(25.0),
-                    ),
-                  ),
-                  isScrollControlled: true,
-                  context: context,
-                  builder: (BuildContext context) {
-                    return Container(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                         // Padding(
-                            //padding: EdgeInsets.all(8.0),
-                             TextFormField(
-                              decoration: const InputDecoration(
-                                hintText: 'Event Name',
-                                labelText: 'Event',
-                                icon: Icon(Icons.details)
-                              ),
-                              
-                            ),
-                         // ),
-                          DateTimePicker(
-                            type: DateTimePickerType.dateTime,
-                            dateMask: 'yyyy/MM/dd',
-                            controller: _controller3,
-                            firstDate: DateTime(2000),
-                            lastDate: DateTime(2100),
-                            icon: Icon(Icons.event),
-                            dateLabelText: 'Date',
-                          ),
-                          DateTimePicker(
-                            type: DateTimePickerType.time,
-                            controller: _controller4,
-                            //initialValue: _initialValue,
-                            icon: Icon(Icons.access_time),
-                            timeLabelText: "Time",
-                            //use24HourFormat: false,
-                            //locale: Locale('en', 'US'),
-                          ),
-                        ],
-                      ),
-                    );
-                  });
-            }),
-        appBar: ShiftingTabBar(
-          controller: _tabController,
-          color: Color(0xFF0198E1),
-          tabs: [
-            ShiftingTab(icon: Icon(LineAwesomeIcons.list_ul), text: 'Task'),
-            ShiftingTab(icon: Icon(LineAwesomeIcons.fire), text: 'Feed'),
-            ShiftingTab(icon: Icon(LineAwesomeIcons.user_1), text: 'Clubs'),
-          ],
-        ),
-      ),
+  onPageChanged(int pageIndex) {
+    setState(() {
+      this.pageIndex = pageIndex;
+    });
+  }
+
+  onTap(int pageIndex) {
+    pageController.animateToPage(
+      pageIndex,
+      duration: Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
     );
+  }
+
+  Widget buildNavBar(String type) {
+    print('----nav------');
+    print(type);
+    if (type == 'Club') {
+      return CupertinoTabBar(
+          currentIndex: pageIndex,
+          onTap: onTap,
+          activeColor: Theme.of(context).primaryColor,
+          items: [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.whatshot),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.event_available_sharp),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.add),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.search),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.group_rounded),
+            ),
+          ]);
+    } else {
+      return CupertinoTabBar(
+          currentIndex: pageIndex,
+          onTap: onTap,
+          activeColor: Theme.of(context).primaryColor,
+          items: [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.whatshot),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.event_available_sharp),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.search),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.group_rounded),
+            ),
+          ]);
+    }
+  }
+
+  List<Widget> navFunctions(String type) {
+    print('-=-=-navFunction-=-==-');
+    print(type);
+    List<Widget> l1 = [
+      //Timeline(),
+      RaisedButton(
+        child: Text('Logout'),
+        onPressed: logout,
+      ),
+      ActivityFeed(),
+      Upload(),
+      Search(),
+      Profile(),
+    ];
+    List<Widget> l2 = [
+      //Timeline(),
+      RaisedButton(
+        child: Text('Logout'),
+        onPressed: logout,
+      ),
+      ActivityFeed(),
+      Search(),
+      Profile(),
+    ];
+    if (type == 'Club') {
+      return l1;
+    } else {
+      return l2;
+    }
+  }
+
+  Scaffold buildAuthScreen() {
+    return Scaffold(
+        body: PageView(
+          children: navFunctions(currentUser.profileType),
+          // <Widget>[
+          //   //Timeline(),
+          //   RaisedButton(
+          //     child: Text('Logout'),
+          //     onPressed: logout,
+          //   ),
+          //   ActivityFeed(),
+          //   Search(),
+          //   Profile(),
+          // ],
+          controller: pageController,
+          onPageChanged: onPageChanged,
+          physics: NeverScrollableScrollPhysics(),
+        ),
+        bottomNavigationBar: buildNavBar(currentUser.profileType)
+        // CupertinoTabBar(
+        //     currentIndex: pageIndex,
+        //     onTap: onTap,
+        //     activeColor: Theme.of(context).primaryColor,
+        //     items: [
+        //       BottomNavigationBarItem(
+        //         icon: Icon(Icons.whatshot),
+        //       ),
+        //       BottomNavigationBarItem(
+        //         icon: Icon(Icons.event_available_sharp),
+        //       ),
+        //       BottomNavigationBarItem(
+        //         icon: Icon(Icons.search),
+        //       ),
+        //       BottomNavigationBarItem(
+        //         icon: Icon(Icons.group_rounded),
+        //       ),
+        //     ]),
+        );
+    // return RaisedButton(
+    //   child: Text('Logout'),
+    //   onPressed: logout,
+    // );
   }
 
   Scaffold buildUnAuthScreen() {
@@ -157,7 +267,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Text(
-              'Nuget',
+              'FlutterShare',
               style: TextStyle(
                 fontFamily: "Signatra",
                 fontSize: 90.0,
