@@ -33,7 +33,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    buildNavBar(currentUser.profileType);
+
     pageController = PageController();
     // Detects when user signed in
     googleSignIn.onCurrentUserChanged.listen((account) {
@@ -44,6 +44,10 @@ class _HomeState extends State<Home> {
     // Reauthenticate user when app is opened
     googleSignIn.signInSilently(suppressErrors: false).then((account) {
       handleSignIn(account);
+      //
+    }).then((value) {
+      print('signin value->');
+      print(value);
     }).catchError((err) {
       print('Error signing in: $err');
     });
@@ -66,6 +70,7 @@ class _HomeState extends State<Home> {
     // 1) check if user exists in users collection in database (according to their id)
     final GoogleSignInAccount user = googleSignIn.currentUser;
     DocumentSnapshot doc = await usersRef.doc(user.id).get();
+    //buildNavBar(currentUser.profileType);
     //ProfileModal profile;
     if (!doc.exists) {
       // 2) if the user doesn't exist, then we want to take them to the create account page
@@ -104,8 +109,9 @@ class _HomeState extends State<Home> {
     super.dispose();
   }
 
-  login() {
-    googleSignIn.signIn();
+  login() async {
+    await googleSignIn.signIn();
+    buildNavBar(currentUser.profileType);
   }
 
   logout() {
@@ -206,42 +212,42 @@ class _HomeState extends State<Home> {
 
   Scaffold buildAuthScreen() {
     return Scaffold(
-        body: PageView(
-          children: navFunctions(currentUser.profileType),
-          // <Widget>[
-          //   //Timeline(),
-          //   RaisedButton(
-          //     child: Text('Logout'),
-          //     onPressed: logout,
-          //   ),
-          //   ActivityFeed(),
-          //   Search(),
-          //   Profile(),
-          // ],
-          controller: pageController,
-          onPageChanged: onPageChanged,
-          physics: NeverScrollableScrollPhysics(),
-        ),
-        bottomNavigationBar: buildNavBar(currentUser.profileType)
-        // CupertinoTabBar(
-        //     currentIndex: pageIndex,
-        //     onTap: onTap,
-        //     activeColor: Theme.of(context).primaryColor,
-        //     items: [
-        //       BottomNavigationBarItem(
-        //         icon: Icon(Icons.whatshot),
-        //       ),
-        //       BottomNavigationBarItem(
-        //         icon: Icon(Icons.event_available_sharp),
-        //       ),
-        //       BottomNavigationBarItem(
-        //         icon: Icon(Icons.search),
-        //       ),
-        //       BottomNavigationBarItem(
-        //         icon: Icon(Icons.group_rounded),
-        //       ),
-        //     ]),
-        );
+      body: PageView(
+        children: <Widget>[
+          //Timeline(),
+          RaisedButton(
+            child: Text('Logout'),
+            onPressed: logout,
+          ),
+          ActivityFeed(),
+          Search(),
+          Profile(),
+        ],
+        controller: pageController,
+        onPageChanged: onPageChanged,
+        physics: NeverScrollableScrollPhysics(),
+      ),
+      bottomNavigationBar: 
+      CupertinoTabBar(
+          currentIndex: pageIndex,
+          onTap: onTap,
+          activeColor: Theme.of(context).primaryColor,
+          items: [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.whatshot),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.event_available_sharp),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.search),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.group_rounded),
+            ),
+          ]),
+    );
+    
     // return RaisedButton(
     //   child: Text('Logout'),
     //   onPressed: logout,
