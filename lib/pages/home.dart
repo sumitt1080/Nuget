@@ -26,6 +26,13 @@ class _MyHomePageState extends State<MyHomePage> {
   PageController pageController;
   int pageIndex = 0;
 
+  final slider = SleekCircularSlider(
+  appearance: CircularSliderAppearance(
+    spinnerMode: true,
+    size: 50.0,
+
+   ));
+
   @override
   void dispose() {
     pageController.dispose();
@@ -179,7 +186,7 @@ class _MyHomePageState extends State<MyHomePage> {
           return Scaffold(
             appBar: appBar,
             body: Center(
-              child: CircularProgressIndicator(),
+              child: slider,
             ),
           );
         }
