@@ -19,15 +19,16 @@ class User {
     this.bio,
   });
 
-  factory User.fromDocument(DocumentSnapshot doc) {
-    return User(
-      id: doc['id'],
-      email: doc['email'],
-      profileType: doc['profileType'],
-      username: doc['username'],
-      photoUrl: doc['photoUrl'],
-      displayName: doc['displayName'],
-      bio: doc['bio'],
-    );
-  }
+//   factory User.fromDocument(DocumentSnapshot doc) {
+//     return User(
+//       id: doc['id'],
+//       email: doc['email'],
+//       profileType: doc['profileType'],
+//       username: doc['username'],
+//       photoUrl: doc['photoUrl'],
+//       displayName: doc['displayName'],
+//       bio: doc['bio'],
+//     );
+//   }
+// }
 }

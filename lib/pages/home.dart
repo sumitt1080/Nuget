@@ -1,121 +1,35 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:nuget/models/profilemodal.dart';
-import 'package:nuget/models/user.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:nuget/pages/activity_feed.dart';
-import 'package:nuget/pages/create_account.dart';
 import 'package:nuget/pages/profile.dart';
 import 'package:nuget/pages/search.dart';
 import 'package:nuget/pages/timeline.dart';
 import 'package:nuget/pages/upload.dart';
+import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 import 'package:shifting_tabbar/shifting_tabbar.dart';
-import 'package:line_awesome_flutter/line_awesome_flutter.dart';
-import 'package:date_time_picker/date_time_picker.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
-final GoogleSignIn googleSignIn = GoogleSignIn();
-final usersRef = FirebaseFirestore.instance.collection('users');
-final DateTime timestamp = DateTime.now();
-User currentUser;
+final FirebaseAuth auth = FirebaseAuth.instance;
+final User user = auth.currentUser;
+final uid = user.uid;
 
-class Home extends StatefulWidget {
+class MyHomePage extends StatefulWidget {
+  MyHomePage({Key key}) : super(key: key);
+
   @override
-  _HomeState createState() => _HomeState();
+  _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _HomeState extends State<Home> {
-  bool isAuth = false;
+class _MyHomePageState extends State<MyHomePage> {
+  Stream<String> _stream;
   PageController pageController;
   int pageIndex = 0;
-
-  @override
-  void initState() {
-    super.initState();
-
-    pageController = PageController();
-    // Detects when user signed in
-    googleSignIn.onCurrentUserChanged.listen((account) {
-      handleSignIn(account);
-    }, onError: (err) {
-      print('Error signing in: $err');
-    });
-    // Reauthenticate user when app is opened
-    googleSignIn.signInSilently(suppressErrors: false).then((account) {
-      handleSignIn(account);
-      //
-    }).then((value) {
-      print('signin value->');
-      print(value);
-    }).catchError((err) {
-      print('Error signing in: $err');
-    });
-  }
-
-  handleSignIn(GoogleSignInAccount account) {
-    if (account != null) {
-      createUserInFirestore();
-      setState(() {
-        isAuth = true;
-      });
-    } else {
-      setState(() {
-        isAuth = false;
-      });
-    }
-  }
-
-  createUserInFirestore() async {
-    // 1) check if user exists in users collection in database (according to their id)
-    final GoogleSignInAccount user = googleSignIn.currentUser;
-    DocumentSnapshot doc = await usersRef.doc(user.id).get();
-    //buildNavBar(currentUser.profileType);
-    //ProfileModal profile;
-    if (!doc.exists) {
-      // 2) if the user doesn't exist, then we want to take them to the create account page
-      ProfileModal profile = await Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => CreateAccount(),
-        ),
-      );
-      print('--@--@--@');
-      print(profile.profiletype);
-      print('########');
-      print(profile.username);
-
-      // 3) get username from create account, use it to make new user document in users collection
-      usersRef.doc(user.id).set({
-        "id": user.id,
-        "username": profile.username,
-        "profileType": profile.profiletype,
-        "photoUrl": user.photoUrl,
-        "email": user.email,
-        "displayName": user.displayName,
-        "bio": "",
-        "timestamp": timestamp
-      });
-      doc = await usersRef.doc(user.id).get();
-    }
-    currentUser = User.fromDocument(doc);
-    print(currentUser);
-    print(currentUser.profileType);
-  }
 
   @override
   void dispose() {
     pageController.dispose();
     super.dispose();
-  }
-
-  login() async {
-    await googleSignIn.signIn();
-    buildNavBar(currentUser.profileType);
-  }
-
-  logout() {
-    googleSignIn.signOut();
   }
 
   onPageChanged(int pageIndex) {
@@ -133,12 +47,12 @@ class _HomeState extends State<Home> {
   }
 
   Widget buildNavBar(String type) {
-    print('----nav------');
+    print('----buildNavBar------');
     print(type);
     if (type == 'Club') {
       return CupertinoTabBar(
-          currentIndex: pageIndex,
-          onTap: onTap,
+          // currentIndex: pageIndex,
+          // onTap: onTap,
           activeColor: Theme.of(context).primaryColor,
           items: [
             BottomNavigationBarItem(
@@ -159,8 +73,8 @@ class _HomeState extends State<Home> {
           ]);
     } else {
       return CupertinoTabBar(
-          currentIndex: pageIndex,
-          onTap: onTap,
+          // currentIndex: pageIndex,
+          // onTap: onTap,
           activeColor: Theme.of(context).primaryColor,
           items: [
             BottomNavigationBarItem(
@@ -183,22 +97,14 @@ class _HomeState extends State<Home> {
     print('-=-=-navFunction-=-==-');
     print(type);
     List<Widget> l1 = [
-      //Timeline(),
-      RaisedButton(
-        child: Text('Logout'),
-        onPressed: logout,
-      ),
+      Timeline(),
       ActivityFeed(),
       Upload(),
       Search(),
       Profile(),
     ];
     List<Widget> l2 = [
-      //Timeline(),
-      RaisedButton(
-        child: Text('Logout'),
-        onPressed: logout,
-      ),
+      Timeline(),
       ActivityFeed(),
       Search(),
       Profile(),
@@ -210,99 +116,91 @@ class _HomeState extends State<Home> {
     }
   }
 
-  Scaffold buildAuthScreen() {
-    return Scaffold(
-      body: PageView(
-        children: <Widget>[
-          //Timeline(),
-          RaisedButton(
-            child: Text('Logout'),
-            onPressed: logout,
+  @override
+  Widget build(BuildContext context) {
+    final appBar = AppBar(
+      title: Text('Nuget'),
+      actions: [
+        DropdownButton(
+          icon: Icon(
+            Icons.more_vert,
+            color: Colors.white,
           ),
-          ActivityFeed(),
-          Search(),
-          Profile(),
-        ],
-        controller: pageController,
-        onPageChanged: onPageChanged,
-        physics: NeverScrollableScrollPhysics(),
-      ),
-      bottomNavigationBar: 
-      CupertinoTabBar(
-          currentIndex: pageIndex,
-          onTap: onTap,
-          activeColor: Theme.of(context).primaryColor,
           items: [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.whatshot),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.event_available_sharp),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.search),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.group_rounded),
-            ),
-          ]),
-    );
-    
-    // return RaisedButton(
-    //   child: Text('Logout'),
-    //   onPressed: logout,
-    // );
-  }
-
-  Scaffold buildUnAuthScreen() {
-    return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topRight,
-            end: Alignment.bottomLeft,
-            colors: [
-              Theme.of(context).accentColor,
-              Theme.of(context).primaryColor,
-            ],
-          ),
-        ),
-        alignment: Alignment.center,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'FlutterShare',
-              style: TextStyle(
-                fontFamily: "Signatra",
-                fontSize: 90.0,
-                color: Colors.white,
-              ),
-            ),
-            GestureDetector(
-              onTap: login,
+            DropdownMenuItem(
               child: Container(
-                width: 260.0,
-                height: 60.0,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage(
-                      'assets/images/google_signin_button.png',
+                child: Row(
+                  children: [
+                    Icon(Icons.exit_to_app),
+                    SizedBox(
+                      width: 8.0,
                     ),
-                    fit: BoxFit.cover,
-                  ),
+                    Text('Logout,')
+                  ],
                 ),
               ),
-            )
+              value: 'logout',
+            ),
           ],
+          onChanged: (itemIdentifier) {
+            if (itemIdentifier == 'logout') {
+              FirebaseAuth.instance.signOut();
+            }
+          },
         ),
-      ),
+      ],
+    );
+
+    return StreamBuilder<String>(
+      stream: _stream,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.active) {
+          FloatingActionButton floatingActionButton;
+
+          if (snapshot.data == 'Club') {
+            // floatingActionButton = FloatingActionButton(
+            //   onPressed: () {},
+            //   child: Icon(Icons.add),
+            // );
+          }
+
+          return Scaffold(
+            appBar: appBar,
+            body: PageView(
+              children: navFunctions(snapshot.data),
+              controller: pageController,
+              onPageChanged: onPageChanged,
+              physics: NeverScrollableScrollPhysics(),
+            ),
+            //floatingActionButton: floatingActionButton,
+            bottomNavigationBar: buildNavBar(snapshot.data),
+          );
+        } else {
+          return Scaffold(
+            appBar: appBar,
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        }
+      },
     );
   }
 
   @override
-  Widget build(BuildContext context) {
-    return isAuth ? buildAuthScreen() : buildUnAuthScreen();
+  void initState() {
+    super.initState();
+    pageController = PageController();
+    _stream = FirebaseAuth.instance
+        .authStateChanges()
+        .asyncMap(
+          (user) => FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .get(),
+        )
+        .map(
+          (doc) => doc.data()['profileType'],
+        );
   }
 }

@@ -56,6 +56,7 @@ dependencies:
   date_time_picker: ^1.1.0
   persistent_bottom_nav_bar: ^3.1.0
   duration: ^2.0.15
+  sleek_circular_slider: ^1.2.0+web
 
 dev_dependencies:
   flutter_test:

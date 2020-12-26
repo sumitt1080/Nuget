@@ -16,7 +16,7 @@ class _SearchState extends State<Search> {
   Future<QuerySnapshot> searchResultsFuture;
 
   handleSearch(String query) {
-    Future<QuerySnapshot> users = usersRef
+    Future<QuerySnapshot> users = FirebaseFirestore().collection('users')
         .where("displayName", isGreaterThanOrEqualTo: query)
         .get();
     setState(() {
@@ -86,9 +86,9 @@ class _SearchState extends State<Search> {
         }
         List<UserResult> searchResults = [];
         snapshot.data.documents.forEach((doc) {
-          User user = User.fromDocument(doc);
-          UserResult searchResult = UserResult(user);
-          searchResults.add(searchResult);
+          //User user = User.fromDocument(doc);
+        //  UserResult searchResult = UserResult(user);
+          //searchResults.add(searchResult);
         });
         return ListView(
           children: searchResults,
