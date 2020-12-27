@@ -1,9 +1,19 @@
 //import 'dart:html';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:duration/duration.dart';
+import 'package:sleek_circular_slider/sleek_circular_slider.dart';
+import 'package:date_time_picker/date_time_picker.dart';
+
+final FirebaseAuth auth = FirebaseAuth.instance;
+final User user = auth.currentUser;
+final uid = user.uid;
 
 class Upload extends StatefulWidget {
   @override
@@ -14,6 +24,22 @@ class _UploadState extends State<Upload> {
   TextEditingController _controller2;
   TextEditingController _controller3;
   TextEditingController _controller4;
+  final detailController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+
+  String eventName;
+  String organiser;
+  String detail;
+  DateTime date = DateTime.now();
+  TimeOfDay time1;
+  int day, hour, minute;
+  bool _isLoading = false;
+
+  final slider = SleekCircularSlider(
+      appearance: CircularSliderAppearance(
+    spinnerMode: true,
+    size: 50.0,
+  ));
 
   @override
   void initState() {
@@ -24,7 +50,59 @@ class _UploadState extends State<Upload> {
     _controller4 = TextEditingController(text: '$lsHour:$lsMinute');
   }
 
- Container buildSplashScreen() {
+  @override
+  void dispose() {
+    _controller2.dispose();
+    _controller3.dispose();
+    _controller4.dispose();
+    super.dispose();
+  }
+
+  Future<void> submit() async {
+    _formKey.currentState.save();
+    print(time1);
+    //final dur = Duration(days: day, hours: hour, minutes: minute);
+    try {
+      setState(() {
+        _isLoading = true;
+      });
+      await FirebaseFirestore.instance
+          .collection('event')
+          .doc(uid)
+          .collection('post')
+          .doc()
+          .set({
+        'Event': eventName,
+        'Organiser': organiser,
+        'Description': detail,
+        'Date': date,
+        // 'Start Time': time1,
+        // 'Duration': dur,
+      });
+      setState(() {
+        _isLoading = false;
+      });
+    } catch (err) {
+      setState(() {
+        _isLoading = false;
+      });
+      print(err);
+    }
+  }
+
+  Future<Null> _selectDate(BuildContext context) async {
+    final DateTime picked = await showDatePicker(
+        context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime(2015, 8),
+        lastDate: DateTime(2101));
+    if (picked != null && picked != date)
+      setState(() {
+        date = picked;
+      });
+  }
+
+  Container buildSplashScreen(double width) {
     return Container(
       color: Theme.of(context).accentColor.withOpacity(0.6),
       child: Column(
@@ -47,64 +125,176 @@ class _UploadState extends State<Upload> {
                 color: Colors.deepOrange,
                 onPressed: () {
                   showModalBottomSheet<void>(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: new BorderRadius.only(
-                      topLeft: const Radius.circular(25.0),
-                      topRight: const Radius.circular(25.0),
-                    ),
-                  ),
-                  isScrollControlled: true,
-                  context: context,
-                  builder: (BuildContext context) {
-                    return Container(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                         // Padding(
-                            //padding: EdgeInsets.all(8.0),
-                             TextFormField(
-                              decoration: const InputDecoration(
-                                hintText: 'Event Name',
-                                labelText: 'Event',
-                                icon: Icon(Icons.details)
-                              ),
-                              
-                            ),
-                         // ),
-                         TextFormField(
-                              decoration: const InputDecoration(
-                                hintText: 'Who\'s the Organiser',
-                                labelText: 'Organiser',
-                                icon: Icon(Icons.details)
-                              ),
-                            ),
-                            TextField(
-                              keyboardType: TextInputType.multiline,
-                              minLines: 1,
-                              maxLines: 2,
-                            ),
-                          DateTimePicker(
-                            type: DateTimePickerType.dateTime,
-                            dateMask: 'yyyy/MM/dd',
-                            controller: _controller3,
-                            firstDate: DateTime(2000),
-                            lastDate: DateTime(2100),
-                            icon: Icon(Icons.event),
-                            dateLabelText: 'Date',
-                          ),
-                          DateTimePicker(
-                            type: DateTimePickerType.time,
-                            controller: _controller4,
-                            //initialValue: _initialValue,
-                            icon: Icon(Icons.access_time),
-                            timeLabelText: "Time",
-                            //use24HourFormat: false,
-                            //locale: Locale('en', 'US'),
-                          ),
-                        ],
+                      shape: RoundedRectangleBorder(
+                        borderRadius: new BorderRadius.only(
+                          topLeft: const Radius.circular(25.0),
+                          topRight: const Radius.circular(25.0),
+                        ),
                       ),
-                    );
-                  });
+                      isScrollControlled: true,
+                      context: context,
+                      builder: (BuildContext context) {
+                        return Container(
+                          child: Form(
+                            key: _formKey,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                // Padding(
+                                //padding: EdgeInsets.all(8.0),
+                                TextFormField(
+                                    decoration: const InputDecoration(
+                                        hintText: 'Event Name',
+                                        labelText: 'Event',
+                                        icon: Icon(Icons.details)),
+                                    onSaved: (value) {
+                                      eventName = value;
+                                      print('Event: $eventName');
+                                    }),
+                                // ),
+                                TextFormField(
+                                  decoration: const InputDecoration(
+                                      hintText: 'Who\'s the Organiser',
+                                      labelText: 'Organiser',
+                                      icon: Icon(Icons.details)),
+                                  onSaved: (value) {
+                                    organiser = value;
+                                    print('Organiser: $organiser');
+                                  },
+                                ),
+                                TextField(
+                                  controller: detailController,
+                                  keyboardType: TextInputType.multiline,
+                                  minLines: 1,
+                                  maxLines: 2,
+                                  onSubmitted: (value) {
+                                    print('Detail: $detail');
+                                    detail = value;
+                                  },
+                                  onChanged: (value) {
+                                    detail = value;
+                                  },
+                                ),
+                                // RaisedButton(
+                                //   onPressed: () => _selectDate(context),
+                                //   child: Text('Select date'),
+                                // ),
+                                DateTimeField(
+                                  format: DateFormat("dd-MM-yyyy"),
+                                  onShowPicker: (context, currentValue) {
+                                    return showDatePicker(
+                                        context: context,
+                                        firstDate: DateTime(1900),
+                                        initialDate:
+                                            currentValue ?? DateTime.now(),
+                                        lastDate: DateTime(2100));
+                                    setState(() {
+                                      date = currentValue;
+                                    });
+                                  },
+                                ),
+                                // DateTimeField(
+                                //   format: DateFormat("HH:mm"),
+                                //   onShowPicker: (context, currentValue) async {
+                                //     final time = await showTimePicker(
+                                //       context: context,
+                                //       initialTime: TimeOfDay.fromDateTime(
+                                //           currentValue ?? DateTime.now()),
+                                //     );
+                                //     setState(() {
+                                //       time1 = time;
+                                //     });
+                                //     return DateTimeField.convert(time);
+                                //   },
+                                // ),
+                                // DateTimePicker(
+                                //   type: DateTimePickerType.dateTime,
+                                //   dateMask: 'yyyy/MM/dd',
+                                //   controller: _controller3,
+                                //   firstDate: DateTime(2000),
+                                //   lastDate: DateTime(2100),
+                                //   icon: Icon(Icons.event),
+                                //   dateLabelText: 'Date',
+                                //   onSaved: (value) {
+                                //
+                                //     print(date);
+                                //   },
+                                // ),
+                                // DateTimePicker(
+                                //   type: DateTimePickerType.time,
+                                //   controller: _controller4,
+                                //   //initialValue: _initialValue,
+                                //   icon: Icon(Icons.access_time),
+                                //   timeLabelText: "Time",
+                                //   onSaved: (value) {
+                                //     //time = value as TimeOfDay;
+                                //     print(value);
+                                //   },
+                                //   //use24HourFormat: false,
+                                //   //locale: Locale('en', 'US'),
+                                // ),
+                                // Row(
+                                //   mainAxisAlignment:
+                                //       MainAxisAlignment.spaceEvenly,
+                                //   children: <Widget>[
+                                //     SizedBox(
+                                //       width: width,
+                                //       child: ListView(
+                                //         //scrollDirection: Axis.horizontal,
+                                //         shrinkWrap: true,
+                                //         children: <Widget>[
+                                //           Icon(Icons.lock_clock),
+                                //           TextFormField(
+                                //             keyboardType: TextInputType.number,
+                                //             decoration: const InputDecoration(
+                                //               hintText: 'Days',
+                                //               //labelText: 'Organiser',
+                                //             ),
+                                //             onSaved: (value) {
+                                //               day = value as int;
+                                //             },
+                                //           ),
+                                //           TextFormField(
+                                //             keyboardType: TextInputType.number,
+                                //             decoration: const InputDecoration(
+                                //               hintText: 'Hour',
+                                //               //labelText: 'Organiser',
+                                //             ),
+                                //             onSaved: (value) {
+                                //               hour = value as int;
+                                //             },
+                                //           ),
+                                //           TextFormField(
+                                //             keyboardType: TextInputType.number,
+                                //             decoration: const InputDecoration(
+                                //               hintText: 'Minute',
+                                //               //labelText: 'Organiser',
+                                //             ),
+                                //             onSaved: (value) {
+                                //               minute = value as int;
+                                //             },
+                                //           ),
+                                //         ],
+                                //       ),
+                                //     ),
+                                //   ],
+                                // ),
+                                RaisedButton(
+                                  child: _isLoading ? slider : Text('Submit'),
+                                  color: Colors.blue,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(30.0))),
+                                  onPressed: () {
+                                    print(eventName);
+                                    submit();
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      });
                 }),
           ),
         ],
@@ -114,6 +304,7 @@ class _UploadState extends State<Upload> {
 
   @override
   Widget build(BuildContext context) {
-    return buildSplashScreen();
+    double width = MediaQuery.of(context).size.width;
+    return buildSplashScreen(width);
   }
 }

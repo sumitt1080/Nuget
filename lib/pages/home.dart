@@ -58,8 +58,8 @@ class _MyHomePageState extends State<MyHomePage> {
     print(type);
     if (type == 'Club') {
       return CupertinoTabBar(
-          // currentIndex: pageIndex,
-          // onTap: onTap,
+          currentIndex: pageIndex,
+          onTap: onTap,
           activeColor: Theme.of(context).primaryColor,
           items: [
             BottomNavigationBarItem(
@@ -80,8 +80,8 @@ class _MyHomePageState extends State<MyHomePage> {
           ]);
     } else {
       return CupertinoTabBar(
-          // currentIndex: pageIndex,
-          // onTap: onTap,
+          currentIndex: pageIndex,
+          onTap: onTap,
           activeColor: Theme.of(context).primaryColor,
           items: [
             BottomNavigationBarItem(
