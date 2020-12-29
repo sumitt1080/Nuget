@@ -24,13 +24,23 @@ class _UploadState extends State<Upload> {
   TextEditingController _controller2;
   TextEditingController _controller3;
   TextEditingController _controller4;
+  TextEditingController _controller1;
+  TextEditingController _controller5;
+  String _valueChanged1 = '';
+  String _valueToValidate1 = '';
+  String _valueSaved1 = '';
+//  DateTime _valueSaved1 = null;
+  String _valueChanged2 = '';
+  String _valueToValidate2 = '';
+  String _valueSaved2 = '';
+  // DateTime _valueSaved2 =null ;
   final detailController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
   String eventName;
   String organiser;
   String detail;
-  DateTime date = DateTime.now();
+  DateTime date;
   TimeOfDay time1;
   int day, hour, minute;
   bool _isLoading = false;
@@ -75,8 +85,8 @@ class _UploadState extends State<Upload> {
         'Event': eventName,
         'Organiser': organiser,
         'Description': detail,
-        'Date': date,
-        // 'Start Time': time1,
+        'Date': _valueSaved1,
+        'Start Time': _valueSaved2,
         // 'Duration': dur,
       });
       setState(() {
@@ -90,17 +100,17 @@ class _UploadState extends State<Upload> {
     }
   }
 
-  Future<Null> _selectDate(BuildContext context) async {
-    final DateTime picked = await showDatePicker(
-        context: context,
-        initialDate: DateTime.now(),
-        firstDate: DateTime(2015, 8),
-        lastDate: DateTime(2101));
-    if (picked != null && picked != date)
-      setState(() {
-        date = picked;
-      });
-  }
+  // Future<Null> _selectDate(BuildContext context) async {
+  //   final DateTime picked = await showDatePicker(
+  //       context: context,
+  //       initialDate: DateTime.now(),
+  //       firstDate: DateTime(2015, 8),
+  //       lastDate: DateTime(2101));
+  //   if (picked != null && picked != date)
+  //     setState(() {
+  //       date = picked;
+  //     });
+  // }
 
   Container buildSplashScreen(double width) {
     return Container(
@@ -175,110 +185,45 @@ class _UploadState extends State<Upload> {
                                     detail = value;
                                   },
                                 ),
-                                // RaisedButton(
-                                //   onPressed: () => _selectDate(context),
-                                //   child: Text('Select date'),
-                                // ),
-                                DateTimeField(
-                                  format: DateFormat("dd-MM-yyyy"),
-                                  onShowPicker: (context, currentValue) {
-                                    return showDatePicker(
-                                        context: context,
-                                        firstDate: DateTime(1900),
-                                        initialDate:
-                                            currentValue ?? DateTime.now(),
-                                        lastDate: DateTime(2100));
-                                    setState(() {
-                                      date = currentValue;
-                                    });
+
+                                DateTimePicker(
+                                  type: DateTimePickerType.date,
+                                  dateMask: 'd MMM, yyyy',
+                                  controller: _controller1,
+                                  //initialValue: _initialValue,
+                                  firstDate: DateTime(2000),
+                                  lastDate: DateTime(2100),
+                                  icon: Icon(Icons.event),
+                                  dateLabelText: 'Date',
+
+                                  onChanged: (val) =>
+                                      setState(() => _valueChanged1 = val),
+                                  validator: (val) {
+                                    setState(() => _valueToValidate1 = val);
+                                    return null;
                                   },
+                                  onSaved: (val) =>
+                                      setState(() => _valueSaved1 = val),
+                                  textInputAction: TextInputAction.next,
                                 ),
-                                // DateTimeField(
-                                //   format: DateFormat("HH:mm"),
-                                //   onShowPicker: (context, currentValue) async {
-                                //     final time = await showTimePicker(
-                                //       context: context,
-                                //       initialTime: TimeOfDay.fromDateTime(
-                                //           currentValue ?? DateTime.now()),
-                                //     );
-                                //     setState(() {
-                                //       time1 = time;
-                                //     });
-                                //     return DateTimeField.convert(time);
-                                //   },
-                                // ),
-                                // DateTimePicker(
-                                //   type: DateTimePickerType.dateTime,
-                                //   dateMask: 'yyyy/MM/dd',
-                                //   controller: _controller3,
-                                //   firstDate: DateTime(2000),
-                                //   lastDate: DateTime(2100),
-                                //   icon: Icon(Icons.event),
-                                //   dateLabelText: 'Date',
-                                //   onSaved: (value) {
-                                //
-                                //     print(date);
-                                //   },
-                                // ),
-                                // DateTimePicker(
-                                //   type: DateTimePickerType.time,
-                                //   controller: _controller4,
-                                //   //initialValue: _initialValue,
-                                //   icon: Icon(Icons.access_time),
-                                //   timeLabelText: "Time",
-                                //   onSaved: (value) {
-                                //     //time = value as TimeOfDay;
-                                //     print(value);
-                                //   },
-                                //   //use24HourFormat: false,
-                                //   //locale: Locale('en', 'US'),
-                                // ),
-                                // Row(
-                                //   mainAxisAlignment:
-                                //       MainAxisAlignment.spaceEvenly,
-                                //   children: <Widget>[
-                                //     SizedBox(
-                                //       width: width,
-                                //       child: ListView(
-                                //         //scrollDirection: Axis.horizontal,
-                                //         shrinkWrap: true,
-                                //         children: <Widget>[
-                                //           Icon(Icons.lock_clock),
-                                //           TextFormField(
-                                //             keyboardType: TextInputType.number,
-                                //             decoration: const InputDecoration(
-                                //               hintText: 'Days',
-                                //               //labelText: 'Organiser',
-                                //             ),
-                                //             onSaved: (value) {
-                                //               day = value as int;
-                                //             },
-                                //           ),
-                                //           TextFormField(
-                                //             keyboardType: TextInputType.number,
-                                //             decoration: const InputDecoration(
-                                //               hintText: 'Hour',
-                                //               //labelText: 'Organiser',
-                                //             ),
-                                //             onSaved: (value) {
-                                //               hour = value as int;
-                                //             },
-                                //           ),
-                                //           TextFormField(
-                                //             keyboardType: TextInputType.number,
-                                //             decoration: const InputDecoration(
-                                //               hintText: 'Minute',
-                                //               //labelText: 'Organiser',
-                                //             ),
-                                //             onSaved: (value) {
-                                //               minute = value as int;
-                                //             },
-                                //           ),
-                                //         ],
-                                //       ),
-                                //     ),
-                                //   ],
-                                // ),
+                                DateTimePicker(
+                                  type: DateTimePickerType.time,
+                                  controller: _controller5,
+                                  //initialValue: _initialValue,
+                                  icon: Icon(Icons.access_time),
+                                  timeLabelText: "Time",
+                                  //use24HourFormat: false,
+                                  //locale: Locale('en', 'US'),
+                                  onChanged: (val) =>
+                                      setState(() => _valueChanged2 = val),
+                                  validator: (val) {
+                                    setState(() => _valueToValidate2 = val);
+                                    return null;
+                                  },
+                                  onSaved: (val) =>
+                                      setState(() => _valueSaved2 = val),
+                                  textInputAction: TextInputAction.next,
+                                ),
                                 RaisedButton(
                                   child: _isLoading ? slider : Text('Submit'),
                                   color: Colors.blue,
