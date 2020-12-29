@@ -47,6 +47,7 @@ class _TimelineState extends State<Timeline>
         'Event',
       ));
       print(res.get('Organiser'));
+      
       print('-------------');
       Card card = new Card(
         child: Row(
