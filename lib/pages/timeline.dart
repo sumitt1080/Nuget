@@ -79,9 +79,27 @@ class _TimelineState extends State<Timeline>
   @override
   Widget build(context) {
     //getEvents();
-    return FutureBuilder<Widget>(
-      future: getEvents(),
-      builder: (BuildContext context),
+    return Scaffold(
+      body: StreamBuilder(
+        stream: eventref.snapshots(),
+        builder: (ctx, streamSnapshot) {
+          if (streamSnapshot.connectionState == ConnectionState.waiting) {
+            print('Yaha hai bsdk');
+            return Center(
+              child: slider,
+            );
+          }
+          final documents = streamSnapshot.data.documents;
+          print(streamSnapshot.data.documents.length);
+          return ListView.builder(
+            itemCount: documents.length,
+            itemBuilder: (ctx, index) => Container(
+              padding: EdgeInsets.all(8),
+              child: Text(documents[index]['Organiser']),
+            ),
+          );
+        },
+      ),
     );
   }
 }
