@@ -9,6 +9,7 @@ import 'package:nuget/pages/timeline.dart';
 import 'package:nuget/pages/upload.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 import 'package:shifting_tabbar/shifting_tabbar.dart';
+import '../widgets/header.dart' as header;
 
 final FirebaseAuth auth = FirebaseAuth.instance;
 final User user = auth.currentUser;

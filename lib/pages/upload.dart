@@ -1,5 +1,7 @@
 //import 'dart:html';
 
+//import 'dart:html';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -82,6 +84,7 @@ class _UploadState extends State<Upload> {
           .collection('post')
           .doc()
           .set({
+           'TimeStamp': Timestamp.now(), 
         'Event': eventName,
         'Organiser': organiser,
         'Description': detail,
