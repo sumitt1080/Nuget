@@ -39,62 +39,59 @@ class EventDetail extends StatelessWidget {
           if (snapshot.connectionState == ConnectionState.done) {
             Map<String, dynamic> data = snapshot.data.data();
             //return Text("Event: ${data['Event']} ${data['Organiser']}");
-            return Card(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0)),
-              shadowColor: Color(0xFF848482),
-              elevation: 5.0,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: <Widget>[
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Event: ${data['Event']}',
-                        style: TextStyle(
-                            fontSize: 20.0, fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(
-                        height: 5.0,
-                      ),
-                      Text(
-                        'Organiser: ${data['Organiser']}',
-                        style: TextStyle(
-                            fontSize: 20.0, fontWeight: FontWeight.w400),
-                      ),
-                      
-                       Text(
-                        'Description: ${data['Description']}',
-                        style: TextStyle(
-                            fontSize: 20.0, fontWeight: FontWeight.w400),
-                      ),
-                       Text(
-                        'Date: ${data['Date']}',
-                        style: TextStyle(
-                            fontSize: 20.0, fontWeight: FontWeight.w400),
-                      ),
-                      Text(
-                        'Starting from: ${data['Start Time']}',
-                        style: TextStyle(
-                            fontSize: 20.0, fontWeight: FontWeight.w400),
-                      ),
-                       Text(
-                        'At: ${data['Venue']}',
-                        style: TextStyle(
-                            fontSize: 20.0, fontWeight: FontWeight.w400),
-                      ),
-                      SizedBox(height: 20.0,),
-                      Text(
-                        'Please do Come',
-                        style: TextStyle(
-                            fontSize: 20.0, fontWeight: FontWeight.w400),
-                      ),
-                    ],
-                  ),
-                  
-                ],
+            return SizedBox(
+              width: MediaQuery.of(context).size.width,
+              child: Card(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0)),
+                shadowColor: Color(0xFF848482),
+                elevation: 5.0,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Event: ${data['Event']}',
+                      style: TextStyle(
+                          fontSize: 20.0, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(
+                      height: 5.0,
+                    ),
+                    Text(
+                      'Organiser: ${data['Organiser']}',
+                      style: TextStyle(
+                          fontSize: 20.0, fontWeight: FontWeight.w400),
+                    ),
+                    
+                     Text(
+                      'Description: ${data['Description']}',
+                      style: TextStyle(
+                          fontSize: 20.0, fontWeight: FontWeight.w400),
+                    ),
+                     Text(
+                      'Date: ${data['Date']}',
+                      style: TextStyle(
+                          fontSize: 20.0, fontWeight: FontWeight.w400),
+                    ),
+                    Text(
+                      'Starting from: ${data['Start Time']}',
+                      style: TextStyle(
+                          fontSize: 20.0, fontWeight: FontWeight.w400),
+                    ),
+                     Text(
+                      'At: ${data['Venue']}',
+                      style: TextStyle(
+                          fontSize: 20.0, fontWeight: FontWeight.w400),
+                    ),
+                    SizedBox(height: 20.0,),
+                    Text(
+                      'Please do Come',
+                      style: TextStyle(
+                          fontSize: 20.0, fontWeight: FontWeight.w400),
+                    ),
+                  ],
+                ),
               ),
             );
           }

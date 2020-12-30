@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:nuget/pages/activity_feed.dart';
 import 'package:nuget/pages/profile.dart';
-import 'package:nuget/pages/search.dart';
+import 'package:nuget/pages/ClubList.dart';
 import 'package:nuget/pages/timeline.dart';
 import 'package:nuget/pages/upload.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
@@ -66,12 +66,12 @@ class _MyHomePageState extends State<MyHomePage> {
           height: 50.0,
           animationCurve: Curves.easeInOut,
           animationDuration: Duration(milliseconds: 200),
-          buttonBackgroundColor: Theme.of(context).primaryColor,
+          buttonBackgroundColor: Colors.white,
           items: [
              Icon(Icons.whatshot), 
              Icon(Icons.event_available_sharp),
              Icon(Icons.add, size: 40,),
-              Icon(Icons.search),
+              Icon(Icons.list),
               Icon(Icons.group_rounded),
           ]);
     } else {
@@ -82,11 +82,12 @@ class _MyHomePageState extends State<MyHomePage> {
           height: 50.0,
           animationCurve: Curves.easeIn,
           animationDuration: Duration(milliseconds: 200),
-          buttonBackgroundColor: Theme.of(context).primaryColor,
+          buttonBackgroundColor: Colors.white,
           items: [
             
-              Icon(Icons.whatshot), Icon(Icons.event_available_sharp),
-              Icon(Icons.search),
+              Icon(Icons.whatshot), 
+              Icon(Icons.event_available_sharp),
+              Icon(Icons.list),
               Icon(Icons.group_rounded),
           
           ]);
@@ -100,13 +101,13 @@ class _MyHomePageState extends State<MyHomePage> {
       Timeline(),
       ActivityFeed(),
       Upload(),
-      Search(),
+      ClubList(),
       Profile(),
     ];
     List<Widget> l2 = [
       Timeline(),
       ActivityFeed(),
-      Search(),
+      ClubList(),
       Profile(),
     ];
     if (type == 'Club') {
