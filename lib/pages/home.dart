@@ -10,6 +10,7 @@ import 'package:nuget/pages/upload.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 import 'package:shifting_tabbar/shifting_tabbar.dart';
 import '../widgets/header.dart' as header;
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 
 final FirebaseAuth auth = FirebaseAuth.instance;
 final User user = auth.currentUser;
@@ -58,45 +59,34 @@ class _MyHomePageState extends State<MyHomePage> {
     print('----buildNavBar------');
     print(type);
     if (type == 'Club') {
-      return CupertinoTabBar(
-          currentIndex: pageIndex,
+      return CurvedNavigationBar(
+          index: pageIndex,
           onTap: onTap,
-          activeColor: Theme.of(context).primaryColor,
+          backgroundColor: Colors.white,
+          animationCurve: Curves.bounceIn,
+          animationDuration: Duration(milliseconds: 800),
+          buttonBackgroundColor: Theme.of(context).primaryColor,
           items: [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.whatshot),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.event_available_sharp),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.add),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.search),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.group_rounded),
-            ),
+             Icon(Icons.whatshot), 
+             Icon(Icons.event_available_sharp),
+             Icon(Icons.add, size: 35,),
+              Icon(Icons.search),
+              Icon(Icons.group_rounded),
           ]);
     } else {
-      return CupertinoTabBar(
-          currentIndex: pageIndex,
+      return CurvedNavigationBar(
+          index: pageIndex,
           onTap: onTap,
-          activeColor: Theme.of(context).primaryColor,
+           backgroundColor: Colors.white,
+           animationCurve: Curves.bounceIn,
+           animationDuration: Duration(milliseconds: 800),
+          buttonBackgroundColor: Theme.of(context).primaryColor,
           items: [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.whatshot),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.event_available_sharp),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.search),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.group_rounded),
-            ),
+            
+              Icon(Icons.whatshot), Icon(Icons.event_available_sharp),
+              Icon(Icons.search),
+              Icon(Icons.group_rounded),
+          
           ]);
     }
   }

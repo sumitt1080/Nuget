@@ -42,6 +42,7 @@ class _UploadState extends State<Upload> {
   String eventName;
   String organiser;
   String detail;
+  String venue;
   DateTime date;
   TimeOfDay time1;
   int day, hour, minute;
@@ -78,9 +79,7 @@ class _UploadState extends State<Upload> {
       setState(() {
         _isLoading = true;
       });
-      await FirebaseFirestore.instance
-          .collection('event')
-          .doc()
+      await FirebaseFirestore.instance.collection('event').doc()
           // .collection('post')
           // .doc()
           .set({
@@ -88,6 +87,7 @@ class _UploadState extends State<Upload> {
         'Event': eventName,
         'Organiser': organiser,
         'Description': detail,
+        'Venue': venue,
         'Date': _valueSaved1,
         'Start Time': _valueSaved2,
         'Owner': uid,
@@ -145,22 +145,28 @@ class _UploadState extends State<Upload> {
                           topRight: const Radius.circular(25.0),
                         ),
                       ),
-                      isScrollControlled: true,
+                      isScrollControlled: false,
+                      enableDrag: true,
                       context: context,
                       builder: (BuildContext context) {
                         return Container(
                           child: Form(
                             key: _formKey,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
+                            child: ListView(
+                              padding: EdgeInsets.only(
+                                top: 10,
+                                left: 10,
+                                right: 10,
+                                bottom: MediaQuery.of(context).viewInsets.bottom +10,
+                              ),
+                              scrollDirection: Axis.vertical,
                               children: <Widget>[
-                                // Padding(
-                                //padding: EdgeInsets.all(8.0),
                                 TextFormField(
                                     decoration: const InputDecoration(
                                         hintText: 'Event Name',
                                         labelText: 'Event',
-                                        icon: Icon(Icons.details)),
+                                        icon: Icon(Icons.event_note)),
+                                        onEditingComplete: () => FocusScope.of(context).nextFocus(),
                                     onSaved: (value) {
                                       eventName = value;
                                       print('Event: $eventName');
@@ -170,13 +176,30 @@ class _UploadState extends State<Upload> {
                                   decoration: const InputDecoration(
                                       hintText: 'Who\'s the Organiser',
                                       labelText: 'Organiser',
-                                      icon: Icon(Icons.details)),
+                                      icon: Icon(Icons.person_add)),
+                                      onEditingComplete: () => FocusScope.of(context).nextFocus(),
                                   onSaved: (value) {
                                     organiser = value;
                                     print('Organiser: $organiser');
                                   },
                                 ),
+                                TextFormField(
+                                  decoration: const InputDecoration(
+                                      hintText: 'Where\'s the Event',
+                                      labelText: 'Venue',
+                                      icon: Icon(Icons.add_location)),
+                                      onEditingComplete: () => FocusScope.of(context).nextFocus(),
+                                  onSaved: (value) {
+                                    venue = value;
+                                  },
+                                ),
                                 TextField(
+                                  decoration: InputDecoration(
+                                    labelText: 'Description',
+                                    hintText: 'Enter Description',
+                                    icon: Icon(Icons.description),
+                                    
+                                  ),
                                   controller: detailController,
                                   keyboardType: TextInputType.multiline,
                                   minLines: 1,

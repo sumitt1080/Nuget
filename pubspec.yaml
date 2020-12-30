@@ -50,7 +50,6 @@ dependencies:
   simple_animations: ^2.2.2
   image: ^2.1.18
   animator: ^2.0.1
-  curved_navigation_bar: ^0.3.4
   shifting_tabbar: ^0.3.1
   line_awesome_icons: ^1.0.4+2
   date_time_picker: ^1.1.0
@@ -60,6 +59,7 @@ dependencies:
   intl: ^0.16.1
   datetime_picker_formfield: ^1.0.0
   liquid_pull_to_refresh: ^2.0.0
+  curved_navigation_bar: ^0.3.7
 
 dev_dependencies:
   flutter_test:
