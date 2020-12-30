@@ -59,6 +59,7 @@ dependencies:
   sleek_circular_slider: ^1.2.0+web
   intl: ^0.16.1
   datetime_picker_formfield: ^1.0.0
+  liquid_pull_to_refresh: ^2.0.0
 
 dev_dependencies:
   flutter_test:

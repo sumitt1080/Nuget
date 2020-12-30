@@ -462,6 +462,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.4+2"
+  liquid_pull_to_refresh:
+    dependency: "direct main"
+    description:
+      name: liquid_pull_to_refresh
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.0"
   matcher:
     dependency: transitive
     description:

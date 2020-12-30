@@ -80,16 +80,17 @@ class _UploadState extends State<Upload> {
       });
       await FirebaseFirestore.instance
           .collection('event')
-          .doc(uid)
-          .collection('post')
           .doc()
+          // .collection('post')
+          // .doc()
           .set({
-           'TimeStamp': Timestamp.now(), 
+        'TimeStamp': Timestamp.now(),
         'Event': eventName,
         'Organiser': organiser,
         'Description': detail,
         'Date': _valueSaved1,
         'Start Time': _valueSaved2,
+        'Owner': uid,
         // 'Duration': dur,
       });
       setState(() {
@@ -235,6 +236,7 @@ class _UploadState extends State<Upload> {
                                           Radius.circular(30.0))),
                                   onPressed: () {
                                     print(eventName);
+                                    Navigator.pop(context);
                                     submit();
                                   },
                                 ),
