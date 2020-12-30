@@ -177,39 +177,14 @@ class _AuthFormState extends State<AuthForm> {
                       : SizedBox(
                           height: 1.0,
                         ),
-                  // DropdownButton(
-                  //   key: ValueKey('profileType'),
-
-                  //   hint: Text('Choose'),
-                  //   icon: Icon(Icons.arrow_drop_down),
-                  //   iconSize: 24,
-                  //   elevation: 16,
-                  //   style: TextStyle(color: Colors.deepPurple),
-                  //   isExpanded: true,
-                  //   underline: Container(
-                  //     height: 2,
-                  //     color: Colors.deepPurpleAccent,
-                  //   ),
-                  //   onChanged: (value) {
-                  //     _profileType = value;
-                  //     setState(() {
-                  //       _profileType ;
-                  //     });
-                  //   },
-                  //   value: _profileType,
-                  //   items: <String>['Student', 'Club'].map((String value) {
-                  //     return DropdownMenuItem(
-                  //       value: value,
-                  //       child: new Text(value),
-                  //     );
-                  //   }).toList(),
-                  // ),
-
                   SizedBox(height: 12),
                   if (widget.isLoading) slider,
                   if (!widget.isLoading)
                     RaisedButton(
-                      child: Text(_isLogin ? 'Login' : 'Signup'),
+                      color: Colors.blue,
+                      hoverColor: Colors.green,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
+                      child: Text(_isLogin ? 'Login' : 'Signup', style: TextStyle(color: Colors.white),),
                       onPressed: _trySubmit,
                     ),
                   if (!widget.isLoading)
@@ -217,7 +192,7 @@ class _AuthFormState extends State<AuthForm> {
                       textColor: Theme.of(context).primaryColor,
                       child: Text(_isLogin
                           ? 'Create new account'
-                          : 'I already have an account'),
+                          : 'I already have an account',style: TextStyle(color: Colors.black),),
                       onPressed: () {
                         setState(() {
                           _isLogin = !_isLogin;

@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:nuget/widgets/post.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
-import '../widgets/header.dart' as header;
+import '../widgets/header.dart' as head;
 import '../widgets/header.dart';
 import 'dart:convert';
 import 'EventDetail.dart';
@@ -76,6 +76,7 @@ class _TimelineState extends State<Timeline> {
   Widget build(context) {
     //getEvents();
     return Scaffold(
+      appBar: head.header(context, isAppTitle: false, titleText: 'Timeline'),
       backgroundColor: Color(0xFFfaf0e6),
       body: StreamBuilder(
         stream: eventref.orderBy('Date', descending: true).snapshots(),
@@ -161,36 +162,7 @@ class _TimelineState extends State<Timeline> {
                       ),
                     ),
                   ),
-                  // onLongPress: () {
-                  //   return showDialog(
-                  //     builder: (BuildContext context) {
-                  //       return AlertDialog(
-                  //         content: Column(
-                  //           children: [
-                  //             Text(
-                  //               'Starting From:${documents[index]['Start Time']}',
-                  //               style: TextStyle(
-                  //                   fontSize: 20.0,
-                  //                   fontWeight: FontWeight.w400),
-                  //             ),
-                  //             Text(
-                  //               'At:${documents[index]['Venue']}',
-                  //               style: TextStyle(
-                  //                   fontSize: 20.0,
-                  //                   fontWeight: FontWeight.w400),
-                  //             ),
-                  //             Text(
-                  //               'You should Come',
-                  //               style: TextStyle(
-                  //                   fontSize: 20.0,
-                  //                   fontWeight: FontWeight.w400),
-                  //             ),
-                  //           ],
-                  //         ),
-                  //       );
-                  //     },
-                  //   );
-                  // },
+                 
                 ),
                 onTap: () {
                   eveID = documents[index].documentID;

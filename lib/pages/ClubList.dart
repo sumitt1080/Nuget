@@ -6,6 +6,7 @@ import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 import '../models/user.dart';
 import 'home.dart';
 import '../widgets/progress.dart';
+import '../widgets/header.dart' as head;
 
 class ClubList extends StatefulWidget {
   @override
@@ -24,6 +25,7 @@ class _ClubListState extends State<ClubList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: head.header(context, isAppTitle: false, titleText: 'Clubs'),
       backgroundColor: Color(0xFFfaf0e6),
       body: StreamBuilder(
       stream: usersRef.where('profileType', isEqualTo: 'Club').snapshots(),

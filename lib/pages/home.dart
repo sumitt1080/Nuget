@@ -9,7 +9,7 @@ import 'package:nuget/pages/timeline.dart';
 import 'package:nuget/pages/upload.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 import 'package:shifting_tabbar/shifting_tabbar.dart';
-import '../widgets/header.dart' as header;
+import '../widgets/header.dart' as head;
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 
 final FirebaseAuth auth = FirebaseAuth.instance;
@@ -29,11 +29,10 @@ class _MyHomePageState extends State<MyHomePage> {
   int pageIndex = 0;
 
   final slider = SleekCircularSlider(
-  appearance: CircularSliderAppearance(
+      appearance: CircularSliderAppearance(
     spinnerMode: true,
     size: 50.0,
-
-   ));
+  ));
 
   @override
   void dispose() {
@@ -68,11 +67,14 @@ class _MyHomePageState extends State<MyHomePage> {
           animationDuration: Duration(milliseconds: 200),
           buttonBackgroundColor: Colors.white,
           items: [
-             Icon(Icons.whatshot), 
-             Icon(Icons.event_available_sharp),
-             Icon(Icons.add, size: 40,),
-              Icon(Icons.list),
-              Icon(Icons.group_rounded),
+            Icon(Icons.whatshot),
+            Icon(Icons.event_available_sharp),
+            Icon(
+              Icons.add,
+              size: 40,
+            ),
+            Icon(Icons.list),
+            Icon(Icons.group_rounded),
           ]);
     } else {
       return CurvedNavigationBar(
@@ -84,12 +86,10 @@ class _MyHomePageState extends State<MyHomePage> {
           animationDuration: Duration(milliseconds: 200),
           buttonBackgroundColor: Colors.white,
           items: [
-            
-              Icon(Icons.whatshot), 
-              Icon(Icons.event_available_sharp),
-              Icon(Icons.list),
-              Icon(Icons.group_rounded),
-          
+            Icon(Icons.whatshot),
+            Icon(Icons.event_available_sharp),
+            Icon(Icons.list),
+            Icon(Icons.group_rounded),
           ]);
     }
   }
@@ -119,39 +119,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final appBar = AppBar(
-      title: Text('Scheduler'),
-      actions: [
-        DropdownButton(
-          icon: Icon(
-            Icons.more_vert,
-            color: Colors.white,
-          ),
-          items: [
-            DropdownMenuItem(
-              child: Container(
-                decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(30.0))),
-                child: Row(
-                  children: [
-                    Icon(Icons.exit_to_app, color: Colors.black,),
-                    SizedBox(
-                      width: 8.0,
-                    ),
-                    Text('Logout,')
-                  ],
-                ),
-              ),
-              value: 'logout',
-            ),
-          ],
-          onChanged: (itemIdentifier) {
-            if (itemIdentifier == 'logout') {
-              FirebaseAuth.instance.signOut();
-            }
-          },
-        ),
-      ],
-    );
+    final appBar = head.header(context, isAppTitle: false, titleText: 'Timeline');
+    
 
     return StreamBuilder<String>(
       stream: _stream,
@@ -160,14 +129,11 @@ class _MyHomePageState extends State<MyHomePage> {
           FloatingActionButton floatingActionButton;
 
           if (snapshot.data == 'Club') {
-            // floatingActionButton = FloatingActionButton(
-            //   onPressed: () {},
-            //   child: Icon(Icons.add),
-            // );
+            
           }
 
           return Scaffold(
-            appBar: appBar,
+            //appBar: head.header(context, isAppTitle: false, titleText: 'Timeline'),
             body: PageView(
               children: navFunctions(snapshot.data),
               controller: pageController,
