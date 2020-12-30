@@ -62,14 +62,15 @@ class _MyHomePageState extends State<MyHomePage> {
       return CurvedNavigationBar(
           index: pageIndex,
           onTap: onTap,
-          backgroundColor: Colors.white,
-          animationCurve: Curves.bounceIn,
-          animationDuration: Duration(milliseconds: 800),
+          backgroundColor: Colors.blueAccent,
+          height: 50.0,
+          animationCurve: Curves.easeInOut,
+          animationDuration: Duration(milliseconds: 200),
           buttonBackgroundColor: Theme.of(context).primaryColor,
           items: [
              Icon(Icons.whatshot), 
              Icon(Icons.event_available_sharp),
-             Icon(Icons.add, size: 35,),
+             Icon(Icons.add, size: 40,),
               Icon(Icons.search),
               Icon(Icons.group_rounded),
           ]);
@@ -77,9 +78,10 @@ class _MyHomePageState extends State<MyHomePage> {
       return CurvedNavigationBar(
           index: pageIndex,
           onTap: onTap,
-           backgroundColor: Colors.white,
-           animationCurve: Curves.bounceIn,
-           animationDuration: Duration(milliseconds: 800),
+          backgroundColor: Colors.blueAccent,
+          height: 50.0,
+          animationCurve: Curves.easeIn,
+          animationDuration: Duration(milliseconds: 200),
           buttonBackgroundColor: Theme.of(context).primaryColor,
           items: [
             
@@ -127,9 +129,10 @@ class _MyHomePageState extends State<MyHomePage> {
           items: [
             DropdownMenuItem(
               child: Container(
+                decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(30.0))),
                 child: Row(
                   children: [
-                    Icon(Icons.exit_to_app),
+                    Icon(Icons.exit_to_app, color: Colors.black,),
                     SizedBox(
                       width: 8.0,
                     ),
