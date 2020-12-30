@@ -53,36 +53,36 @@ class EventDetail extends StatelessWidget {
                     Text(
                       'Event: ${data['Event']}',
                       style: TextStyle(
-                          fontSize: 20.0, fontWeight: FontWeight.bold),
+                          fontSize: 40.0, fontWeight: FontWeight.bold),
                     ),
                     SizedBox(
                       height: 5.0,
                     ),
                     Text(
-                      'Organiser: ${data['Organiser']}',
+                      'Organised By: ${data['Organiser']}',
                       style: TextStyle(
-                          fontSize: 20.0, fontWeight: FontWeight.w400),
+                          fontSize: 25.0, fontWeight: FontWeight.w400),
                     ),
                     
                      Text(
                       'Description: ${data['Description']}',
                       style: TextStyle(
-                          fontSize: 20.0, fontWeight: FontWeight.w400),
+                          fontSize: 25.0, fontWeight: FontWeight.w400),
                     ),
                      Text(
                       'Date: ${data['Date']}',
                       style: TextStyle(
-                          fontSize: 20.0, fontWeight: FontWeight.w400),
+                          fontSize: 25.0, fontWeight: FontWeight.w400),
                     ),
                     Text(
                       'Starting from: ${data['Start Time']}',
                       style: TextStyle(
-                          fontSize: 20.0, fontWeight: FontWeight.w400),
+                          fontSize: 25.0, fontWeight: FontWeight.w400),
                     ),
                      Text(
                       'At: ${data['Venue']}',
                       style: TextStyle(
-                          fontSize: 20.0, fontWeight: FontWeight.w400),
+                          fontSize: 25.0, fontWeight: FontWeight.w400),
                     ),
                     SizedBox(height: 20.0,),
                     Text(

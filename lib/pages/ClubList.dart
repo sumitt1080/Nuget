@@ -12,10 +12,9 @@ class ClubList extends StatefulWidget {
 }
 
 class _ClubListState extends State<ClubList> {
+  CollectionReference usersRef = FirebaseFirestore.instance.collection('users');
   @override
   Widget build(BuildContext context) {
-    return Container(
-      
-    );
+    return Container();
   }
 }
