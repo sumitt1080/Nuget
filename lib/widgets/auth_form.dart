@@ -12,6 +12,7 @@ class AuthForm extends StatefulWidget {
     String password,
     String userName,
     String profileType,
+    String clubName,
     bool isLogin,
     BuildContext ctx,
   ) submitFn;
@@ -24,9 +25,11 @@ class _AuthFormState extends State<AuthForm> {
   final _formKey = GlobalKey<FormState>();
   var _isLogin = true;
   var _userEmail = '';
+
   var _userName = '';
-  String _userPassword ;
+  String _userPassword;
   var _profileType = '';
+  var _club = '';
 
   final slider = SleekCircularSlider(
       appearance: CircularSliderAppearance(
@@ -47,11 +50,20 @@ class _AuthFormState extends State<AuthForm> {
         _userPassword.trim(),
         _userName.trim(),
         _profileType,
+        _club.trim(),
         _isLogin,
         context,
       );
       // Use those values to send our auth request ...
     }
+  }
+
+  isClubSelected() {
+    print('profile Type:$_profileType');
+    if (_profileType == 'Club') {
+      return true;
+    }
+    return false;
   }
 
   @override
@@ -114,65 +126,85 @@ class _AuthFormState extends State<AuthForm> {
                       _userPassword = value;
                     },
                   ),
-                  _isLogin ? SizedBox(width: 2.0,): Padding(
-                    padding: const EdgeInsets.only(top: 2.0),
-                    child: DropDownFormField(
-                  titleText: 'Profile Type',
-                  hintText: 'Please choose one',
-                  value: _profileType,
-                  onSaved: (value) {
-                    setState(() {
-                      _profileType = value;
-                    });
-                  },
-                  onChanged: (value) {
-                    setState(() {
-                      _profileType = value;
-                    });
-                  },
-                  dataSource: [
-                    {
-                      "display": "Student",
-                      "value": "Student",
-                    },
-                    {
-                      "display": "Club",
-                      "value": "Club",
-                    },
-                    
-                  ],
-                  textField: 'display',
-                  valueField: 'value',
-                ),
-              ),
-                    // DropdownButton(
-                    //   key: ValueKey('profileType'),
-                      
-                    //   hint: Text('Choose'),
-                    //   icon: Icon(Icons.arrow_drop_down),
-                    //   iconSize: 24,
-                    //   elevation: 16,
-                    //   style: TextStyle(color: Colors.deepPurple),
-                    //   isExpanded: true,
-                    //   underline: Container(
-                    //     height: 2,
-                    //     color: Colors.deepPurpleAccent,
-                    //   ),
-                    //   onChanged: (value) {
-                    //     _profileType = value;
-                    //     setState(() {
-                    //       _profileType ;
-                    //     });
-                    //   },
-                    //   value: _profileType,
-                    //   items: <String>['Student', 'Club'].map((String value) {
-                    //     return DropdownMenuItem(
-                    //       value: value,
-                    //       child: new Text(value),
-                    //     );
-                    //   }).toList(),
-                    // ),
-                  
+                  _isLogin
+                      ? SizedBox(
+                          width: 2.0,
+                        )
+                      : Padding(
+                          padding: const EdgeInsets.only(top: 2.0),
+                          child: DropDownFormField(
+                            titleText: 'Profile Type',
+                            hintText: 'Please choose one',
+                            value: _profileType,
+                            onSaved: (value) {
+                              setState(() {
+                                _profileType = value;
+                              });
+                            },
+                            onChanged: (value) {
+                              setState(() {
+                                _profileType = value;
+                              });
+                            },
+                            dataSource: [
+                              {
+                                "display": "Student",
+                                "value": "Student",
+                              },
+                              {
+                                "display": "Club",
+                                "value": "Club",
+                              },
+                            ],
+                            textField: 'display',
+                            valueField: 'value',
+                          ),
+                        ),
+                  isClubSelected()
+                      ? TextFormField(
+                          key: ValueKey('organisation'),
+                          validator: (value) {
+                            if (value.isEmpty || value.length < 4) {
+                              return 'Please enter at least 4 characters';
+                            }
+                            return null;
+                          },
+                          decoration: InputDecoration(labelText: 'Club Name'),
+                          onSaved: (value) {
+                            _club = value;
+                          },
+                        )
+                      : SizedBox(
+                          height: 1.0,
+                        ),
+                  // DropdownButton(
+                  //   key: ValueKey('profileType'),
+
+                  //   hint: Text('Choose'),
+                  //   icon: Icon(Icons.arrow_drop_down),
+                  //   iconSize: 24,
+                  //   elevation: 16,
+                  //   style: TextStyle(color: Colors.deepPurple),
+                  //   isExpanded: true,
+                  //   underline: Container(
+                  //     height: 2,
+                  //     color: Colors.deepPurpleAccent,
+                  //   ),
+                  //   onChanged: (value) {
+                  //     _profileType = value;
+                  //     setState(() {
+                  //       _profileType ;
+                  //     });
+                  //   },
+                  //   value: _profileType,
+                  //   items: <String>['Student', 'Club'].map((String value) {
+                  //     return DropdownMenuItem(
+                  //       value: value,
+                  //       child: new Text(value),
+                  //     );
+                  //   }).toList(),
+                  // ),
+
                   SizedBox(height: 12),
                   if (widget.isLoading) slider,
                   if (!widget.isLoading)

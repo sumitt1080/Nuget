@@ -20,6 +20,7 @@ class _AuthScreenState extends State<AuthScreen> {
     String password,
     String username,
     String profileType,
+    String clubName,
     bool isLogin,
     BuildContext ctx,
   ) async {
@@ -48,8 +49,10 @@ class _AuthScreenState extends State<AuthScreen> {
           'username': username,
           'email': email,
           'profileType': profileType,
+          'club': clubName,
           'SignUpDate': timestamp,
         });
+        
       }
     }on PlatformException catch (err) {
       var message = 'An error occured, Please try Again';

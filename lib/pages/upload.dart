@@ -104,17 +104,12 @@ class _UploadState extends State<Upload> {
     }
   }
 
-  // Future<Null> _selectDate(BuildContext context) async {
-  //   final DateTime picked = await showDatePicker(
-  //       context: context,
-  //       initialDate: DateTime.now(),
-  //       firstDate: DateTime(2015, 8),
-  //       lastDate: DateTime(2101));
-  //   if (picked != null && picked != date)
-  //     setState(() {
-  //       date = picked;
-  //     });
-  // }
+  _fetchClub() async {
+    DocumentSnapshot result =
+        await FirebaseFirestore.instance.collection('users').doc(uid).get();
+    print('Yaha Dekho: ${result.data()['club']}');
+    organiser = result.data()['club'];
+  }
 
   Container buildSplashScreen(double width) {
     return Container(
@@ -157,7 +152,9 @@ class _UploadState extends State<Upload> {
                                 top: 10,
                                 left: 10,
                                 right: 10,
-                                bottom: MediaQuery.of(context).viewInsets.bottom +10,
+                                bottom:
+                                    MediaQuery.of(context).viewInsets.bottom +
+                                        10,
                               ),
                               scrollDirection: Axis.vertical,
                               children: <Widget>[
@@ -166,29 +163,32 @@ class _UploadState extends State<Upload> {
                                         hintText: 'Event Name',
                                         labelText: 'Event',
                                         icon: Icon(Icons.event_note)),
-                                        onEditingComplete: () => FocusScope.of(context).nextFocus(),
+                                    onEditingComplete: () =>
+                                        FocusScope.of(context).nextFocus(),
                                     onSaved: (value) {
                                       eventName = value;
                                       print('Event: $eventName');
                                     }),
                                 // ),
-                                TextFormField(
-                                  decoration: const InputDecoration(
-                                      hintText: 'Who\'s the Organiser',
-                                      labelText: 'Organiser',
-                                      icon: Icon(Icons.person_add)),
-                                      onEditingComplete: () => FocusScope.of(context).nextFocus(),
-                                  onSaved: (value) {
-                                    organiser = value;
-                                    print('Organiser: $organiser');
-                                  },
-                                ),
+                                // TextFormField(
+                                //   decoration: const InputDecoration(
+                                //       hintText: 'Who\'s the Organiser',
+                                //       labelText: 'Organiser',
+                                //       icon: Icon(Icons.person_add)),
+                                //   onEditingComplete: () =>
+                                //       FocusScope.of(context).nextFocus(),
+                                //   onSaved: (value) {
+                                //     organiser = value;
+                                //     print('Organiser: $organiser');
+                                //   },
+                                // ),
                                 TextFormField(
                                   decoration: const InputDecoration(
                                       hintText: 'Where\'s the Event',
                                       labelText: 'Venue',
                                       icon: Icon(Icons.add_location)),
-                                      onEditingComplete: () => FocusScope.of(context).nextFocus(),
+                                  onEditingComplete: () =>
+                                      FocusScope.of(context).nextFocus(),
                                   onSaved: (value) {
                                     venue = value;
                                   },
@@ -198,7 +198,6 @@ class _UploadState extends State<Upload> {
                                     labelText: 'Description',
                                     hintText: 'Enter Description',
                                     icon: Icon(Icons.description),
-                                    
                                   ),
                                   controller: detailController,
                                   keyboardType: TextInputType.multiline,
@@ -277,6 +276,7 @@ class _UploadState extends State<Upload> {
 
   @override
   Widget build(BuildContext context) {
+    _fetchClub();
     double width = MediaQuery.of(context).size.width;
     return buildSplashScreen(width);
   }

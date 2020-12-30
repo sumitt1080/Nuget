@@ -76,6 +76,7 @@ class _TimelineState extends State<Timeline> {
   Widget build(context) {
     //getEvents();
     return Scaffold(
+      backgroundColor: Color(0xFFfaf0e6),
       body: StreamBuilder(
         stream: eventref.orderBy('Date', descending: true).snapshots(),
         builder: (ctx, streamSnapshot) {
@@ -99,62 +100,65 @@ class _TimelineState extends State<Timeline> {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0)),
                     shadowColor: Color(0xFF848482),
-                    elevation: 5.0,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: <Widget>[
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              documents[index]['Event'],
-                              style: TextStyle(
-                                  fontSize: 20.0, fontWeight: FontWeight.bold),
-                            ),
-                            SizedBox(
-                              height: 5.0,
-                            ),
-                            Text(
-                              documents[index]['Organiser'],
-                              style: TextStyle(
-                                  fontSize: 20.0, fontWeight: FontWeight.w400),
-                            ),
-                            SizedBox(
-                              height: 5.0,
-                            ),
-                            Text(
-                              'On ${documents[index]['Date']} At ${documents[index]['Start Time']}',
-                              style: TextStyle(
-                                  fontSize: 20.0, fontWeight: FontWeight.w300),
-                            ),
-                          ],
-                        ),
-                        isOwner(documents[index]['Owner'])
-                            ? Column(
-                                children: [
-                                  FlatButton(
-                                    child: Icon(
-                                      Icons.delete,
-                                      color: Colors.red,
+                    elevation: 10.0,
+                    child: Padding(
+                      padding: EdgeInsets.all(12.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: <Widget>[
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                documents[index]['Event'],
+                                style: TextStyle(
+                                    fontSize: 20.0, fontWeight: FontWeight.bold),
+                              ),
+                              SizedBox(
+                                height: 5.0,
+                              ),
+                              Text(
+                                documents[index]['Organiser'],
+                                style: TextStyle(
+                                    fontSize: 20.0, fontWeight: FontWeight.w400),
+                              ),
+                              SizedBox(
+                                height: 5.0,
+                              ),
+                              Text(
+                                'On ${documents[index]['Date']} At ${documents[index]['Start Time']}',
+                                style: TextStyle(
+                                    fontSize: 20.0, fontWeight: FontWeight.w300),
+                              ),
+                            ],
+                          ),
+                          isOwner(documents[index]['Owner'])
+                              ? Column(
+                                  children: [
+                                    FlatButton(
+                                      child: Icon(
+                                        Icons.delete,
+                                        color: Colors.red,
+                                      ),
+                                      onPressed: () {
+                                        String docId =
+                                            documents[index].documentID;
+
+                                        print(documents[index].documentID);
+
+                                        // DocumentReference ref = FirebaseFirestore.instance.doc(documents[index].documentID);
+                                        //print(ref.path);
+                                        deleteUser(docId);
+                                      },
                                     ),
-                                    onPressed: () {
-                                      String docId =
-                                          documents[index].documentID;
-
-                                      print(documents[index].documentID);
-
-                                      // DocumentReference ref = FirebaseFirestore.instance.doc(documents[index].documentID);
-                                      //print(ref.path);
-                                      deleteUser(docId);
-                                    },
-                                  ),
-                                ],
-                              )
-                            : Column(),
-                        Column(
-                          children: [Icon(Icons.notifications_active)],
-                        )
-                      ],
+                                  ],
+                                )
+                              : Column(),
+                          Column(
+                            children: [Icon(Icons.notifications_active)],
+                          )
+                        ],
+                      ),
                     ),
                   ),
                   // onLongPress: () {
