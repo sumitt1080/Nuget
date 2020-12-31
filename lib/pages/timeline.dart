@@ -38,15 +38,7 @@ class _TimelineState extends State<Timeline> {
     });
   }
 
-  // void _showCustomMenu(String venue, String time,) {
-  //   final RenderBox overlay = Overlay.of(context).context.findRenderObject();
-  //   showMenu(
-  //     context: context,
-      
-  //   );
-  // }
-
-  //int length;
+  
   final slider = SleekCircularSlider(
       appearance: CircularSliderAppearance(
     spinnerMode: true,

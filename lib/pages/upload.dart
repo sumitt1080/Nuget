@@ -41,7 +41,7 @@ class _UploadState extends State<Upload> {
   // DateTime _valueSaved2 =null ;
   final detailController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  String pid;
+  
 
   String eventName;
   String organiser;
@@ -58,6 +58,8 @@ class _UploadState extends State<Upload> {
     size: 50.0,
   ));
 
+  String pid;
+
   @override
   void initState() {
     _controller2 = TextEditingController(text: DateTime.now().toString());
@@ -65,10 +67,14 @@ class _UploadState extends State<Upload> {
     String lsHour = TimeOfDay.now().hour.toString().padLeft(2, '0');
     String lsMinute = TimeOfDay.now().minute.toString().padLeft(2, '0');
     _controller4 = TextEditingController(text: '$lsHour:$lsMinute');
+
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    final User user = auth.currentUser;
+    final uid = user.uid;
     setState(() {
       final FirebaseAuth auth = FirebaseAuth.instance;
       final User user = auth.currentUser;
-      pid = user.uid;
+      pid = uid;
     });
   }
 
@@ -99,7 +105,7 @@ class _UploadState extends State<Upload> {
         'Venue': venue,
         'Date': _valueSaved1,
         'Start Time': _valueSaved2,
-        'Owner': uid,
+        'Owner': pid,
         // 'Duration': dur,
       });
       setState(() {
