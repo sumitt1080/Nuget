@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:floating_action_bubble/floating_action_bubble.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:nuget/pages/personalEventInfo.dart';
 import 'package:nuget/widgets/post.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 import 'package:floating_action_bubble/floating_action_bubble.dart';
@@ -90,12 +91,20 @@ class _TimelineState extends State<Timeline> with TickerProviderStateMixin {
     }
   }
 
-  Future<void> deleteUser(String id) {
-    return eventref
-        .doc(id)
-        .delete()
-        .then((value) => print("User Deleted:"))
-        .catchError((error) => print("Failed to delete user: $error"));
+  Future<void> deleteUser(int marker, String id) {
+    if (marker == 1) {
+      return eventref
+          .doc(id)
+          .delete()
+          .then((value) => print("User Deleted:"))
+          .catchError((error) => print("Failed to delete user: $error"));
+    } else {
+      perevent
+          .doc(id)
+          .delete()
+          .then((value) => print("User Deleted:"))
+          .catchError((error) => print("Failed to delete user: $error"));
+    }
   }
 
   Future<void> submit() async {
@@ -287,6 +296,7 @@ class _TimelineState extends State<Timeline> with TickerProviderStateMixin {
                 : _animationController.forward(),
             iconColor: Colors.white,
             iconData: Icons.expand,
+            backGroundColor: Colors.green,
           ),
           body: TabBarView(
             children: [
@@ -368,7 +378,7 @@ class _TimelineState extends State<Timeline> with TickerProviderStateMixin {
 
                                                 // DocumentReference ref = FirebaseFirestore.instance.doc(documents[index].documentID);
                                                 //print(ref.path);
-                                                deleteUser(docId);
+                                                deleteUser(1, docId);
                                               },
                                             ),
                                           ],
@@ -415,6 +425,14 @@ class _TimelineState extends State<Timeline> with TickerProviderStateMixin {
                   if (streamSnapshot.hasError) {
                     return Center(
                       child: slider,
+                    );
+                  }
+                  if (!streamSnapshot.hasData) {
+                    return Center(
+                      child: Text(
+                        'No Personal events',
+                        style: TextStyle(fontSize: 24),
+                      ),
                     );
                   }
 
@@ -483,7 +501,7 @@ class _TimelineState extends State<Timeline> with TickerProviderStateMixin {
 
                                           // DocumentReference ref = FirebaseFirestore.instance.doc(documents[index].documentID);
                                           //print(ref.path);
-                                          deleteUser(docId);
+                                          deleteUser(2, docId);
                                         },
                                       ),
                                     ],
@@ -498,9 +516,9 @@ class _TimelineState extends State<Timeline> with TickerProviderStateMixin {
                           title = documents[index]['Event'];
                           print(eveID);
                           Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => EventDetail(
-                                    eveId: eveID,
-                                    title: title,
+                              builder: (context) => PersonalEventInfo(
+                                    eveId: documents[index].documentID,
+                                    title: documents[index]['Event'],
                                   )));
                         },
                       ),

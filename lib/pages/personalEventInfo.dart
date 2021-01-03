@@ -3,12 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 import 'package:intl/intl.dart';
 
-class EventDetail extends StatelessWidget {
+class PersonalEventInfo extends StatelessWidget {
   String eveId;
   String title;
-  EventDetail({this.eveId, this.title});
+  PersonalEventInfo({this.eveId, this.title});
 
-
+  CollectionReference perevent =
+      FirebaseFirestore.instance.collection('privateEvent');
   DateFormat format = new DateFormat("h:mm a");
 
   final slider = SleekCircularSlider(
@@ -17,7 +18,6 @@ class EventDetail extends StatelessWidget {
     size: 50.0,
   ));
 
-  CollectionReference eventref = FirebaseFirestore.instance.collection('event');
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,7 +29,7 @@ class EventDetail extends StatelessWidget {
         ),
       ),
       body: FutureBuilder<DocumentSnapshot>(
-        future: eventref.doc(eveId).get(),
+        future: perevent.doc(eveId).get(),
         builder:
             (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
           if (snapshot.hasError) {
@@ -58,25 +58,28 @@ class EventDetail extends StatelessWidget {
                     SizedBox(
                       height: 5.0,
                     ),
-                    Text(
-                      'Organised By: ${data['Organiser']}',
-                      style: TextStyle(
-                          fontSize: 25.0, fontWeight: FontWeight.w400),
-                    ),
-                    
+                   
                      Text(
                       'Description: ${data['Description']}',
                       style: TextStyle(
                           fontSize: 25.0, fontWeight: FontWeight.w400),
                     ),
-                    
-                   
-                    SizedBox(height: 20.0,),
-                    Text(
-                      'Please do Come',
+                     Text(
+                      'Date: ${data['Date']}',
                       style: TextStyle(
-                          fontSize: 20.0, fontWeight: FontWeight.w400),
+                          fontSize: 25.0, fontWeight: FontWeight.w400),
                     ),
+                    Text(
+                      'Starting from: ${data['Start Time']}',
+                      style: TextStyle(
+                          fontSize: 25.0, fontWeight: FontWeight.w400),
+                    ),
+                     Text(
+                      'At: ${data['Venue']}',
+                      style: TextStyle(
+                          fontSize: 25.0, fontWeight: FontWeight.w400),
+                    ),
+                    
                   ],
                 ),
               ),
