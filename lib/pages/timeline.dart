@@ -4,12 +4,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:floating_action_bubble/floating_action_bubble.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:line_awesome_icons/line_awesome_icons.dart';
 import 'package:nuget/pages/personalEventInfo.dart';
-import 'package:nuget/widgets/post.dart';
+import 'package:shifting_tabbar/shifting_tabbar.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 import 'package:floating_action_bubble/floating_action_bubble.dart';
 import '../widgets/header.dart' as head;
-import '../widgets/header.dart';
+
 import 'dart:convert';
 import 'EventDetail.dart';
 import '../widgets/post.dart';
@@ -263,18 +264,21 @@ class _TimelineState extends State<Timeline> with TickerProviderStateMixin {
         length: 2,
         child: Scaffold(
           appBar: AppBar(
-            title: Text('Timeline'),
-            bottom: TabBar(
-              tabs: [
-                Tab(
-                  text: 'All Event',
-                ),
-                Tab(
-                  text: 'Personal Remainder',
-                )
-              ],
+              flexibleSpace: SizedBox(),
+                title: Text('Timeline'),
+                bottom: TabBar(
+          tabs: [
+            Tab(
+            text: 'All Event',
+            //icon: Icon(LineAwesomeIcons.list)
             ),
-          ),
+            Tab(
+            text: 'Your Remainder',
+           // icon: Icon(LineAwesomeIcons.adjust)
+            )
+          ],
+                    ),
+              ),
           backgroundColor: Color(0xFFfaf0e6),
           floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
           floatingActionButton: FloatingActionBubble(
