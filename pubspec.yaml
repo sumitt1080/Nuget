@@ -61,6 +61,7 @@ dependencies:
   liquid_pull_to_refresh: ^2.0.0
   curved_navigation_bar: ^0.3.7
   floating_action_bubble: ^1.1.2
+  url_launcher: ^5.7.10
 
 dev_dependencies:
   flutter_test:

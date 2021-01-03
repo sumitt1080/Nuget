@@ -27,6 +27,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Stream<String> _stream;
   PageController pageController;
   int pageIndex = 0;
+  String uniProfileType;
 
   final slider = SleekCircularSlider(
       appearance: CircularSliderAppearance(
@@ -39,6 +40,8 @@ class _MyHomePageState extends State<MyHomePage> {
     pageController.dispose();
     super.dispose();
   }
+
+   
 
   onPageChanged(int pageIndex) {
     setState(() {
@@ -99,14 +102,14 @@ class _MyHomePageState extends State<MyHomePage> {
     print(type);
     List<Widget> l1 = [
       Timeline(),
-      ActivityFeed(),
+      ActivityFeed(uniProfileType),
       Upload(),
       ClubList(),
       Profile(),
     ];
     List<Widget> l2 = [
       Timeline(),
-      ActivityFeed(),
+      ActivityFeed(uniProfileType),
       ClubList(),
       Profile(),
     ];
@@ -119,8 +122,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final appBar = head.header(context, isAppTitle: false, titleText: 'Timeline');
-    
+    final appBar =
+        head.header(context, isAppTitle: false, titleText: 'Timeline');
 
     return StreamBuilder<String>(
       stream: _stream,
@@ -129,7 +132,9 @@ class _MyHomePageState extends State<MyHomePage> {
           FloatingActionButton floatingActionButton;
 
           if (snapshot.data == 'Club') {
-            
+            uniProfileType = 'Club';
+          } else {
+            uniProfileType = 'Student';
           }
 
           return Scaffold(

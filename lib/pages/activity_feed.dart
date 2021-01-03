@@ -1,5 +1,7 @@
 import 'dart:developer';
+import 'package:nuget/pages/infoPostDetail.dart';
 
+import 'home.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -14,12 +16,16 @@ final User user = auth.currentUser;
 final uid = user.uid;
 
 class ActivityFeed extends StatefulWidget {
+  ActivityFeed(this.profType);
+  String profType;
   @override
-  _ActivityFeedState createState() => _ActivityFeedState();
+  _ActivityFeedState createState() => _ActivityFeedState(profType);
 }
 
 class _ActivityFeedState extends State<ActivityFeed>
     with TickerProviderStateMixin {
+  String proftype;
+  _ActivityFeedState(this.proftype);
   CollectionReference infoEvent =
       FirebaseFirestore.instance.collection('infoPost');
 
@@ -36,9 +42,7 @@ class _ActivityFeedState extends State<ActivityFeed>
   String eveID;
   String title;
 
-  String _valueChanged1 = '';
-  String _valueToValidate1 = '';
-  bool isaClub = false;
+  bool isaClub = true;
 //  DateTime _valueSaved1 = null;
   String _valueChanged2 = '';
   String _valueToValidate2 = '';
@@ -53,10 +57,12 @@ class _ActivityFeedState extends State<ActivityFeed>
     final FirebaseAuth auth = FirebaseAuth.instance;
     final User user = auth.currentUser;
     final pid = user.uid;
+    isClub();
+
     setState(() {
       profileId = pid;
     });
-    
+
     _animationController = AnimationController(
       vsync: this,
       duration: Duration(milliseconds: 260),
@@ -71,7 +77,7 @@ class _ActivityFeedState extends State<ActivityFeed>
   String organiser;
   String detail;
   String url;
-  bool _isLoading;
+  bool _isLoading = false;
 
   _fetchClub() async {
     DocumentSnapshot result = await FirebaseFirestore.instance
@@ -148,7 +154,7 @@ class _ActivityFeedState extends State<ActivityFeed>
                   TextFormField(
                       keyboardType: TextInputType.url,
                       decoration: const InputDecoration(
-                          hintText: 'Info URl',
+                          hintText: 'Info URL',
                           labelText: 'URL',
                           icon: Icon(Icons.event_note)),
                       onEditingComplete: () =>
@@ -205,17 +211,12 @@ class _ActivityFeedState extends State<ActivityFeed>
     }
   }
 
-  isClub() async {
-    DocumentSnapshot result = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(profileId)
-        .get();
-    print(result.get('profileType'));
-    if (result.get('profileType') == 'Club') {
-      isaClub = true;
-     
+  isClub() {
+    print(proftype);
+    if (proftype == 'Club') {
+      return true;
     } else {
-      isaClub = false;
+      return false;
     }
   }
 
@@ -229,7 +230,8 @@ class _ActivityFeedState extends State<ActivityFeed>
 
   @override
   Widget build(BuildContext context) {
-    isClub();
+    _fetchClub();
+    print(organiser);
     return Scaffold(
       appBar: AppBar(
         title: Text('Feed'),
@@ -237,7 +239,7 @@ class _ActivityFeedState extends State<ActivityFeed>
       ),
       backgroundColor: Color(0xFFfaf0e6),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      floatingActionButton: isaClub
+      floatingActionButton: isClub()
           ? FloatingActionBubble(
               animation: _animation,
               items: [
@@ -257,8 +259,9 @@ class _ActivityFeedState extends State<ActivityFeed>
                   : _animationController.forward(),
               iconColor: Colors.white,
               iconData: Icons.expand,
+              backGroundColor: Colors.green,
             )
-          : null,
+          : Column(),
       body: StreamBuilder(
         stream: infoEvent.snapshots(),
         builder: (ctx, streamSnapshot) {
@@ -266,6 +269,11 @@ class _ActivityFeedState extends State<ActivityFeed>
             print('You are here');
             return Center(
               child: slider,
+            );
+          }
+          if (!streamSnapshot.hasData) {
+            return Center(
+              child: Text('Nothing here'),
             );
           }
 
@@ -343,7 +351,7 @@ class _ActivityFeedState extends State<ActivityFeed>
                   title = documents[index]['Event'];
                   print(eveID);
                   Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => EventDetail(
+                      builder: (context) => InfoPostDetail(
                             eveId: documents[index].documentID,
                             title: documents[index]['Event'],
                           )));
