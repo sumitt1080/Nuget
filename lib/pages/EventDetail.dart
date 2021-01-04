@@ -69,7 +69,21 @@ class EventDetail extends StatelessWidget {
                       style: TextStyle(
                           fontSize: 25.0, fontWeight: FontWeight.w400),
                     ),
-                    
+                    Text(
+                      'At: ${data['Venue']}',
+                      style: TextStyle(
+                          fontSize: 25.0, fontWeight: FontWeight.w400),
+                    ),
+                    Text(
+                      'On: ${data['Date']}',
+                      style: TextStyle(
+                          fontSize: 25.0, fontWeight: FontWeight.w400),
+                    ),
+                    Text(
+                      'Starting at: ${data['Start Time']}',
+                      style: TextStyle(
+                          fontSize: 25.0, fontWeight: FontWeight.w400),
+                    ),
                    
                     SizedBox(height: 20.0,),
                     Text(

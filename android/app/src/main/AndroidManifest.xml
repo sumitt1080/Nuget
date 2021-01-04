@@ -1,7 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.nuget">
+   <uses-permission android:name="android.permission.INTERNET" />
    <application
-        android:label="nuget"
+        android:label="Nuget"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

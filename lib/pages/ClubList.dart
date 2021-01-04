@@ -39,7 +39,7 @@ class _ClubListState extends State<ClubList> {
     size: 50.0,
   ));
 
-  checkIfFollowing(String cardID) async {
+  Future<bool> checkIfFollowing(String cardID) async {
     print(cardID);
     print(pid);
     bool check = false;
@@ -102,30 +102,34 @@ class _ClubListState extends State<ClubList> {
     );
   }
 
-  Widget subscribeButton(String cardID) {
+  subscribeButton(String cardID)  {
     print('Here: $cardID');
     print(cardID);
-    var check = checkIfFollowing(cardID);
+    var check =  checkIfFollowing(cardID);
     print('SubscribeButtonCheck: ${check}');
-    if (checkIfFollowing(cardID) == true) {
+    if (pid == cardID) {
+      return buildButton(
+        text: 'Go',
+        function: handleFollowUser(cardID),
+      );
+    } else if (checkIfFollowing(cardID) == true) {
       print('Entered in true');
       return buildButton(
           text: 'Subscribed',
           function: handleUnfollowUser(cardID),
           color: Colors.grey);
-    } else if (checkIfFollowing(cardID) == false) {
+    } else {
       print('Entered in false');
       return buildButton(
         text: 'Subscribe',
         function: handleFollowUser(cardID),
         color: Colors.red,
       );
-    } else {
-      return slider;
     }
+    // else {
+    //   return slider;
+    // }
   }
-
- 
 
   @override
   Widget build(BuildContext context) {
@@ -162,86 +166,53 @@ class _ClubListState extends State<ClubList> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
+                          // Column(
+                          //   mainAxisAlignment: MainAxisAlignment.start,
+                          //   crossAxisAlignment: CrossAxisAlignment.start,
+                          //   children: [
+                          //     // Text(
+                          //     //   documents[index]['club'],
+                          //     //   style: TextStyle(
+                          //     //       fontSize: 25.0,
+                          //     //       fontWeight: FontWeight.bold),
+                          //     // ),
+                          //     // Text(
+                          //     //   documents[index]['email'],
+                          //     //   style: TextStyle(
+                          //     //       fontSize: 15.0,
+                          //     //       fontWeight: FontWeight.bold),
+                          //     // ),
+                          //   ],
+                          // ),
+                          // SizedBox(
+                          //   width: 10.0,
+                          // ),
                           Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                documents[index]['club'],
-                                style: TextStyle(
-                                    fontSize: 25.0,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              Text(
-                                documents[index]['email'],
-                                style: TextStyle(
-                                    fontSize: 15.0,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            width: 10.0,
-                          ),
-                          Column(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               GestureDetector(
-                                child: subscribeButton(
-                                    documents[index].documentID),
-                                // FlatButton(
-                                //   child: Text(
-                                //     'Subscribe',
-                                //     style: TextStyle(color: Colors.red),
-                                //   ),
-                                //   onPressed: () {
-                                //     print(documents[index].documentID);
-                                //     print('Subscribe Button pressed');
-                                //     handleFollowUser(
-                                //         documents[index].documentID);
-                                //     checkIfFollowing(
-                                //         documents[index].documentID);
+                                 child: subscribeButton(documents[index].documentID),
+                                //FutureBuilder(
+                                //   future: subscribeButton(
+                                //       documents[index].documentID),
+                                //   builder: (BuildContext context,
+                                //       AsyncSnapshot<dynamic> snapshot) {
+                                //     if (snapshot.hasError) {
+                                //       return Text("Something went wrong");
+                                //     }
+                                //     if (snapshot.hasData) {
+                                //       print('Data: ${snapshot.data}');
+                                //     }
+                                //     if (snapshot.connectionState ==
+                                //         ConnectionState.waiting) {
+                                //       return slider;
+                                //     }
                                 //   },
                                 // ),
                               ),
                             ],
                           ),
-                          // // checkIfFollowing(documents[index].documentID)
-                          // //     ? Column(
-                          // //         children: [
-                          // //           GestureDetector(
-                          // //             child: FlatButton(
-                          // //               child: Text(
-                          // //                 'Subscribe',
-                          // //                 style: TextStyle(color: Colors.red),
-                          // //               ),
-                          // //               onPressed: () {
-                          // //                 print(documents[index].documentID);
-                          // //                 print('Subscribe Button pressed');
-                          // //                 handleFollowUser(
-                          // //                     documents[index].documentID);
-                          // //               },
-                          // //             ),
-                          // //           ),
-                          // //         ],
-                          // //       )
-                          // //     : Column(
-                          // //         children: [
-                          // //           GestureDetector(
-                          // //             child: FlatButton(
-                          // //               child: Text(
-                          // //                 '✔️Subscribed',
-                          // //                 style: TextStyle(color: Colors.grey),
-                          // //               ),
-                          // //               onPressed: () {
-                          // //                 print(documents[index].documentID);
-                          // //                 print('Subscribe Button pressed');
-                          // //                 handleFollowUser(
-                          // //                     documents[index].documentID);
-                          // //               },
-                          // //             ),
-                          // //           ),
-                          // //         ],
-                          // //       ),
                         ],
                       ),
                     ),
