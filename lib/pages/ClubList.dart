@@ -16,12 +16,14 @@ class ClubList extends StatefulWidget {
 
 class _ClubListState extends State<ClubList> {
   String pid;
+  Map<String, dynamic> list;
 
   @override
   void initState() {
     final FirebaseAuth auth = FirebaseAuth.instance;
     final User user = auth.currentUser;
     final uid = user.uid;
+    fetchSubscribeList();
     setState(() {
       pid = uid;
     });
@@ -102,37 +104,37 @@ class _ClubListState extends State<ClubList> {
     );
   }
 
-  subscribeButton(String cardID)  {
-    print('Here: $cardID');
-    print(cardID);
-    var check =  checkIfFollowing(cardID);
-    print('SubscribeButtonCheck: ${check}');
-    if (pid == cardID) {
-      return buildButton(
-        text: 'Go',
-        function: handleFollowUser(cardID),
-      );
-    } else if (checkIfFollowing(cardID) == true) {
-      print('Entered in true');
-      return buildButton(
-          text: 'Subscribed',
-          function: handleUnfollowUser(cardID),
-          color: Colors.grey);
+  checkSubscribe(String cardID) {
+    print('Value yaha: ${cardID}');
+    if (list[cardID].toString() == 'true') {
+      return true;
     } else {
-      print('Entered in false');
-      return buildButton(
-        text: 'Subscribe',
-        function: handleFollowUser(cardID),
-        color: Colors.red,
-      );
+      return false;
     }
-    // else {
-    //   return slider;
-    // }
+  }
+
+  fetchSubscribeList() async {
+    DocumentSnapshot result = await usersRef.doc(pid).get();
+    list = await result.data()['subscribedTo'];
+    // print('Here i am:');
+    // print(result.data()['subscribedTo']);
+  }
+
+  removeSubscribe(String cardID) async {
+    await usersRef.doc(pid).update({'subscribedTo.$cardID': false});
+    print('done done');
+  }
+
+  addSubscribe(String cardID) async {
+    await usersRef.doc(pid).update({'subscribedTo.$cardID': true});
+    print('Done');
   }
 
   @override
   Widget build(BuildContext context) {
+    fetchSubscribeList();
+
+    //checkIfFollowing('fRKKGKIf8yfuZLInhqZRk8C7UyZ2');
     return Scaffold(
       appBar: head.header(context, isAppTitle: false, titleText: 'Clubs'),
       backgroundColor: Color(0xFFfaf0e6),
@@ -147,6 +149,8 @@ class _ClubListState extends State<ClubList> {
 
           final documents = streamSnapshot.data.documents;
           print(streamSnapshot.data.documents.length);
+          //print(list);
+          // checkSubscribe('fRKKGKIf8yfuZLInhqZRk8C7UyZ2');
 
           return ListView.builder(
             itemCount: documents.length,
@@ -166,53 +170,80 @@ class _ClubListState extends State<ClubList> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          // Column(
-                          //   mainAxisAlignment: MainAxisAlignment.start,
-                          //   crossAxisAlignment: CrossAxisAlignment.start,
-                          //   children: [
-                          //     // Text(
-                          //     //   documents[index]['club'],
-                          //     //   style: TextStyle(
-                          //     //       fontSize: 25.0,
-                          //     //       fontWeight: FontWeight.bold),
-                          //     // ),
-                          //     // Text(
-                          //     //   documents[index]['email'],
-                          //     //   style: TextStyle(
-                          //     //       fontSize: 15.0,
-                          //     //       fontWeight: FontWeight.bold),
-                          //     // ),
-                          //   ],
-                          // ),
-                          // SizedBox(
-                          //   width: 10.0,
-                          // ),
                           Column(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            crossAxisAlignment: CrossAxisAlignment.end,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              GestureDetector(
-                                 child: subscribeButton(documents[index].documentID),
-                                //FutureBuilder(
-                                //   future: subscribeButton(
-                                //       documents[index].documentID),
-                                //   builder: (BuildContext context,
-                                //       AsyncSnapshot<dynamic> snapshot) {
-                                //     if (snapshot.hasError) {
-                                //       return Text("Something went wrong");
-                                //     }
-                                //     if (snapshot.hasData) {
-                                //       print('Data: ${snapshot.data}');
-                                //     }
-                                //     if (snapshot.connectionState ==
-                                //         ConnectionState.waiting) {
-                                //       return slider;
-                                //     }
-                                //   },
-                                // ),
+                              Text(
+                                documents[index]['club'],
+                                style: TextStyle(
+                                    fontSize: 25.0,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                documents[index]['email'],
+                                style: TextStyle(
+                                    fontSize: 15.0,
+                                    fontWeight: FontWeight.bold),
                               ),
                             ],
                           ),
+                          SizedBox(
+                            width: 10.0,
+                          ),
+                          list.isEmpty
+                              ? Column(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    GestureDetector(
+                                      child: FlatButton(
+                                        child: Text(
+                                          'Subscribe',
+                                          style: TextStyle(
+                                              color: Colors.red,
+                                              fontSize: 15.0),
+                                        ),
+                                        onPressed: () {
+                                          addSubscribe(
+                                              documents[index].documentID);
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : Column(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    GestureDetector(
+                                      child: checkSubscribe(
+                                              documents[index].documentID)
+                                          ? FlatButton(
+                                              child: Text('✔️Subscribed'),
+                                              onPressed: () {
+                                                removeSubscribe(documents[index]
+                                                    .documentID);
+                                                setState(() {
+                                                  
+                                                });
+                                              },
+                                            )
+                                          : FlatButton(
+                                              child: Text(
+                                                'Subscribe',
+                                                style: TextStyle(
+                                                    color: Colors.red,
+                                                    fontSize: 15.0),
+                                              ),
+                                              onPressed: () {
+                                                addSubscribe(documents[index]
+                                                    .documentID);
+                                              },
+                                            ),
+                                    ),
+                                  ],
+                                ),
                         ],
                       ),
                     ),
