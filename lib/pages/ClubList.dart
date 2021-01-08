@@ -41,68 +41,7 @@ class _ClubListState extends State<ClubList> {
     size: 50.0,
   ));
 
-  Future<bool> checkIfFollowing(String cardID) async {
-    print(cardID);
-    print(pid);
-    bool check = false;
-    DocumentSnapshot doc = await subscribersRef
-        .doc(cardID)
-        .collection('userSubscribers')
-        .doc(pid)
-        .get();
-    check = doc.exists;
-    print('Exists? : ${doc.exists}');
-    // print('Check?: $check');
-    //return check;
-    //Future.delayed(Duration(milliseconds: 20));
-
-    if (doc.exists) {
-      return true;
-    } else {
-      return false;
-    }
-    // setState(() {
-    //   isFollowing = doc.exists;
-    // });
-  }
-
-  handleUnfollowUser(String cardID) {
-    setState(() {
-      isFollowing = false;
-    });
-    subscribersRef
-        .doc(cardID)
-        .collection('userFollowers')
-        .doc(pid)
-        .get()
-        .then((doc) {
-      doc.reference.delete();
-    });
-  }
-
-  handleFollowUser(String cardID) {
-    // setState(() {
-    //   isFollowing = true;
-    // });
-    subscribersRef.doc(cardID).collection('userSubscribers').doc(pid).set({});
-    //subscribeButton();
-  }
-
-  Container buildButton({String text, Function function, Color color}) {
-    print('You are in buildButton Function:');
-    print(text);
-    print(function);
-    print(color);
-    return Container(
-      child: FlatButton(
-        onPressed: function,
-        child: Text(
-          text,
-          style: TextStyle(color: color),
-        ),
-      ),
-    );
-  }
+ 
 
   checkSubscribe(String cardID) {
     print('Value yaha: ${cardID}');
@@ -116,8 +55,7 @@ class _ClubListState extends State<ClubList> {
   fetchSubscribeList() async {
     DocumentSnapshot result = await usersRef.doc(pid).get();
     list = await result.data()['subscribedTo'];
-    // print('Here i am:');
-    // print(result.data()['subscribedTo']);
+    
   }
 
   removeSubscribe(String cardID) async {

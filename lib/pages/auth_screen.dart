@@ -51,6 +51,7 @@ class _AuthScreenState extends State<AuthScreen> {
           'profileType': profileType,
           'club': clubName,
           'SignUpDate': timestamp,
+          'subscribedTo': {},
         });
         
       }
