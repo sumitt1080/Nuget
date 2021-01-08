@@ -225,7 +225,12 @@ class _ClubListState extends State<ClubList> {
                                                 removeSubscribe(documents[index]
                                                     .documentID);
                                                 setState(() {
-                                                  
+                                                  fetchSubscribeList();
+                                                  list[documents[index]
+                                                          .documentID] =
+                                                      'false' as dynamic;
+                                                  print(list[documents[index]
+                                                      .documentID]);
                                                 });
                                               },
                                             )
@@ -239,6 +244,14 @@ class _ClubListState extends State<ClubList> {
                                               onPressed: () {
                                                 addSubscribe(documents[index]
                                                     .documentID);
+                                                setState(() {
+                                                  fetchSubscribeList();
+                                                  list[documents[index]
+                                                          .documentID] =
+                                                      'true' as dynamic;
+                                                  print(list[documents[index]
+                                                      .documentID]);
+                                                });
                                               },
                                             ),
                                     ),
