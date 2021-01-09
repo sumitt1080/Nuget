@@ -46,7 +46,6 @@ class _ActivityFeedState extends State<ActivityFeed>
   String title;
 
   bool isaClub = true;
-//  DateTime _valueSaved1 = null;
   String _valueChanged2 = '';
   String _valueToValidate2 = '';
   String _valueSaved2 = '';
@@ -88,7 +87,6 @@ class _ActivityFeedState extends State<ActivityFeed>
         list.add(key);
       }
     });
-    print('Hum Yaha hai: $list');
   }
 
   _fetchClub() async {
@@ -106,8 +104,6 @@ class _ActivityFeedState extends State<ActivityFeed>
         _isLoading = true;
       });
       await FirebaseFirestore.instance.collection('infoPost').doc()
-          // .collection('post')
-          // .doc()
           .set({
         'TimeStamp': Timestamp.now(),
         'Organiser': organiser,
@@ -115,7 +111,6 @@ class _ActivityFeedState extends State<ActivityFeed>
         'URL': url,
         'Description': detail,
         'Owner': profileId,
-        // 'Duration': dur,
       });
       setState(() {
         _isLoading = false;
@@ -161,7 +156,6 @@ class _ActivityFeedState extends State<ActivityFeed>
                           FocusScope.of(context).nextFocus(),
                       onSaved: (value) {
                         eventName = value;
-                        print('Event: $eventName');
                       }),
                   TextFormField(
                       keyboardType: TextInputType.url,
@@ -173,7 +167,6 @@ class _ActivityFeedState extends State<ActivityFeed>
                           FocusScope.of(context).nextFocus(),
                       onSaved: (value) {
                         url = value;
-                        print('URL: $url');
                       }),
                   TextField(
                     decoration: InputDecoration(
@@ -186,7 +179,6 @@ class _ActivityFeedState extends State<ActivityFeed>
                     minLines: 1,
                     maxLines: 4,
                     onSubmitted: (value) {
-                      print('Detail: $detail');
                       detail = value;
                     },
                     onChanged: (value) {
@@ -199,7 +191,6 @@ class _ActivityFeedState extends State<ActivityFeed>
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(30.0))),
                     onPressed: () {
-                      print(eventName);
                       Navigator.pop(context);
                       _animationController.reverse();
                       submit();
@@ -213,9 +204,6 @@ class _ActivityFeedState extends State<ActivityFeed>
   }
 
   bool isOwner(String id) {
-    print('ID-------');
-    print('Current id: $profileId');
-    print(id);
     if (profileId == id) {
       return true;
     } else {
@@ -224,7 +212,6 @@ class _ActivityFeedState extends State<ActivityFeed>
   }
 
   isClub() {
-    print(proftype);
     if (proftype == 'Club') {
       return true;
     } else {
@@ -251,11 +238,9 @@ class _ActivityFeedState extends State<ActivityFeed>
   @override
   Widget build(BuildContext context) {
     _fetchClub();
-    print(organiser);
     return Scaffold(
       appBar: AppBar(
         title: Text('Feed'),
-        //bottom: ,
       ),
       backgroundColor: Color(0xFFfaf0e6),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
@@ -286,7 +271,6 @@ class _ActivityFeedState extends State<ActivityFeed>
         stream: infoEvent.snapshots(),
         builder: (ctx, streamSnapshot) {
           if (streamSnapshot.connectionState == ConnectionState.waiting) {
-            print('You are here');
             return Center(
               child: slider,
             );
@@ -298,7 +282,6 @@ class _ActivityFeedState extends State<ActivityFeed>
           }
 
           final documents = streamSnapshot.data.documents;
-          print(streamSnapshot.data.documents.length);
 
           return ListView.builder(
             itemCount: documents.length,
@@ -351,10 +334,6 @@ class _ActivityFeedState extends State<ActivityFeed>
                                         String docId =
                                             documents[index].documentID;
 
-                                        print(documents[index].documentID);
-
-                                        // DocumentReference ref = FirebaseFirestore.instance.doc(documents[index].documentID);
-                                        //print(ref.path);
                                         deleteUser(docId);
                                       },
                                     ),
@@ -369,7 +348,6 @@ class _ActivityFeedState extends State<ActivityFeed>
                 onTap: () {
                   eveID = documents[index].documentID;
                   title = documents[index]['Event'];
-                  print(eveID);
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => InfoPostDetail(
                             eveId: documents[index].documentID,

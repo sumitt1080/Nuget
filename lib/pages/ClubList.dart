@@ -28,7 +28,6 @@ class _ClubListState extends State<ClubList> {
     final FirebaseAuth auth = FirebaseAuth.instance;
     final User user = auth.currentUser;
     final uid = user.uid;
-    //fetchSubscribeList();
     setState(() {
       pid = uid;
     });
@@ -47,8 +46,15 @@ class _ClubListState extends State<ClubList> {
   ));
 
   checkSubscribe(String cardID) {
-    print('Value yaha: ${cardID}');
     if (list[cardID].toString() == 'true') {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  isListNull() {
+    if (list == null) {
       return true;
     } else {
       return false;
@@ -91,9 +97,7 @@ class _ClubListState extends State<ClubList> {
           }
 
           final documents = streamSnapshot.data.documents;
-          print(streamSnapshot.data.documents.length);
-          //print(list);
-          // checkSubscribe('fRKKGKIf8yfuZLInhqZRk8C7UyZ2');
+          
 
           return ListView.builder(
             itemCount: documents.length,
@@ -134,77 +138,83 @@ class _ClubListState extends State<ClubList> {
                           SizedBox(
                             width: 10.0,
                           ),
-                          list.isEmpty
-                              ? Column(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    GestureDetector(
-                                      child: FlatButton(
-                                        child: Text(
-                                          'Subscribe',
-                                          style: TextStyle(
-                                              color: Colors.red,
-                                              fontSize: 15.0),
-                                        ),
-                                        onPressed: () {
-                                          addSubscribe(
-                                              documents[index].documentID);
-                                          setState(() {
-                                            list[documents[index]
-                                                          .documentID] =
-                                                      'true' as dynamic;
-                                          });
-                                        },
-                                      ),
-                                    ),
-                                  ],
-                                )
-                              : Column(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    GestureDetector(
-                                      child: checkSubscribe(
-                                              documents[index].documentID)
-                                          ? FlatButton(
-                                              child: Text('✔️Subscribed'),
-                                              onPressed: () {
-                                                removeSubscribe(documents[index]
-                                                    .documentID);
-                                                setState(() {
-                                                  //fetchSubscribeList();
-                                                  list[documents[index]
-                                                          .documentID] =
-                                                      'false' as dynamic;
-                                                  print(list[documents[index]
-                                                      .documentID]);
-                                                });
-                                              },
-                                            )
-                                          : FlatButton(
-                                              child: Text(
-                                                'Subscribe',
-                                                style: TextStyle(
-                                                    color: Colors.red,
-                                                    fontSize: 15.0),
-                                              ),
-                                              onPressed: () {
-                                                addSubscribe(documents[index]
-                                                    .documentID);
-                                                setState(() {
-                                                  //fetchSubscribeList();
-                                                  list[documents[index]
-                                                          .documentID] =
-                                                      'true' as dynamic;
-                                                  print(list[documents[index]
-                                                      .documentID]);
-                                                });
-                                              },
+                         
+                              list.isEmpty
+                                  ? Column(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      children: [
+                                        GestureDetector(
+                                          child: FlatButton(
+                                            child: Text(
+                                              'Subscribe',
+                                              style: TextStyle(
+                                                  color: Colors.red,
+                                                  fontSize: 15.0),
                                             ),
+                                            onPressed: () {
+                                              addSubscribe(
+                                                  documents[index].documentID);
+                                              setState(() {
+                                                list[documents[index]
+                                                        .documentID] =
+                                                    'true' as dynamic;
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                  : Column(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      children: [
+                                        GestureDetector(
+                                          child: checkSubscribe(
+                                                  documents[index].documentID)
+                                              ? FlatButton(
+                                                  child: Text('✔️Subscribed'),
+                                                  onPressed: () {
+                                                    removeSubscribe(
+                                                        documents[index]
+                                                            .documentID);
+                                                    setState(() {
+                                                      //fetchSubscribeList();
+                                                      list[documents[index]
+                                                              .documentID] =
+                                                          'false' as dynamic;
+                                                      print(list[
+                                                          documents[index]
+                                                              .documentID]);
+                                                    });
+                                                  },
+                                                )
+                                              : FlatButton(
+                                                  child: Text(
+                                                    'Subscribe',
+                                                    style: TextStyle(
+                                                        color: Colors.red,
+                                                        fontSize: 15.0),
+                                                  ),
+                                                  onPressed: () {
+                                                    addSubscribe(
+                                                        documents[index]
+                                                            .documentID);
+                                                    setState(() {
+                                                      list[documents[index]
+                                                              .documentID] =
+                                                          'true' as dynamic;
+                                                      print(list[
+                                                          documents[index]
+                                                              .documentID]);
+                                                    });
+                                                  },
+                                                ),
+                                        ),
+                                      ],
                                     ),
-                                  ],
-                                ),
                         ],
                       ),
                     ),

@@ -59,7 +59,6 @@ class _InfoPostDetailState extends State<InfoPostDetail> {
 
           if (snapshot.connectionState == ConnectionState.done) {
             Map<String, dynamic> data = snapshot.data.data();
-            //return Text("Event: ${data['Event']} ${data['Organiser']}");
             return ListView(
               scrollDirection: Axis.vertical,
               padding: EdgeInsets.all(10.0),

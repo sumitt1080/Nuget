@@ -88,8 +88,7 @@ class _UploadState extends State<Upload> {
 
   Future<void> submit() async {
     _formKey.currentState.save();
-    print(time1);
-    //final dur = Duration(days: day, hours: hour, minutes: minute);
+    
     try {
       setState(() {
         _isLoading = true;
@@ -182,7 +181,6 @@ class _UploadState extends State<Upload> {
                                           FocusScope.of(context).nextFocus(),
                                       onSaved: (value) {
                                         eventName = value;
-                                        print('Event: $eventName');
                                       }),
                                   TextFormField(
                                     decoration: const InputDecoration(
@@ -206,7 +204,6 @@ class _UploadState extends State<Upload> {
                                     minLines: 1,
                                     maxLines: 2,
                                     onSubmitted: (value) {
-                                      print('Detail: $detail');
                                       detail = value;
                                     },
                                     onChanged: (value) {
@@ -217,7 +214,6 @@ class _UploadState extends State<Upload> {
                                     type: DateTimePickerType.date,
                                     dateMask: 'd MMM, yyyy',
                                     controller: _controller1,
-                                    //initialValue: _initialValue,
                                     firstDate: DateTime(2000),
                                     lastDate: DateTime(2100),
                                     icon: Icon(Icons.event),
@@ -236,11 +232,8 @@ class _UploadState extends State<Upload> {
                                   DateTimePicker(
                                     type: DateTimePickerType.time,
                                     controller: _controller5,
-                                    //initialValue: _initialValue,
                                     icon: Icon(Icons.access_time),
                                     timeLabelText: "Time",
-                                    //use24HourFormat: false,
-                                    //locale: Locale('en', 'US'),
                                     onChanged: (val) =>
                                         setState(() => _valueChanged2 = val),
                                     validator: (val) {
@@ -258,7 +251,6 @@ class _UploadState extends State<Upload> {
                                         borderRadius: BorderRadius.all(
                                             Radius.circular(30.0))),
                                     onPressed: () {
-                                      print(eventName);
                                       Navigator.pop(context);
                                       submit();
                                     },

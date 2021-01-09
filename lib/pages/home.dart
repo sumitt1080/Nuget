@@ -28,6 +28,7 @@ class _MyHomePageState extends State<MyHomePage> {
   PageController pageController;
   int pageIndex = 0;
   String uniProfileType;
+  String uPt;
   Map<String, dynamic> map;
 
   final slider = SleekCircularSlider(
@@ -57,8 +58,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget buildNavBar(String type) {
-    print('----buildNavBar------');
-    print(type);
     if (uniProfileType == 'Club') {
       return CurvedNavigationBar(
           index: pageIndex,
@@ -97,8 +96,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   List<Widget> navFunctions(String type) {
-    print('-=-=-navFunction-=-==-');
-    print(type);
     List<Widget> l1 = [
       Timeline(
         map: map,
@@ -152,14 +149,13 @@ class _MyHomePageState extends State<MyHomePage> {
             );
           }
 
-          print('Here baby: ${uniProfileType}');
 
-          if (uniProfileType == 'Club') {
+          if (uPt == 'Club') {
             uniProfileType = 'Club';
           } else {
             uniProfileType = 'Student';
           }
-          print(map);
+          
 
           return Scaffold(
             //appBar: head.header(context, isAppTitle: false, titleText: 'Timeline'),
@@ -197,8 +193,16 @@ class _MyHomePageState extends State<MyHomePage> {
               .get(),
         )
         .map((doc) {
-      uniProfileType = doc.data()['profileType'];
+      setState(() {
+        uPt = doc.data()['profileType'];
+      });
       map = doc.data()['subscribedTo'];
+    }
+            );
+
+
+    setState(() {
+      uniProfileType = uPt;
     });
   }
 }

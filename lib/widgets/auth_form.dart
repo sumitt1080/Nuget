@@ -78,7 +78,6 @@ class _AuthFormState extends State<AuthForm> {
   }
 
   isClubSelected() {
-    print('profile Type:$_profileType');
     if (_profileType == 'Club') {
       return true;
     }

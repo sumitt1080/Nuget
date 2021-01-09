@@ -38,7 +38,6 @@ class EventDetail extends StatelessWidget {
 
           if (snapshot.connectionState == ConnectionState.done) {
             Map<String, dynamic> data = snapshot.data.data();
-            //return Text("Event: ${data['Event']} ${data['Organiser']}");
             return SizedBox(
               width: MediaQuery.of(context).size.width,
               child: Card(

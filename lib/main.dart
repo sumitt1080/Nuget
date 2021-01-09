@@ -44,15 +44,6 @@ class MyApp extends StatelessWidget {
             String arr1 = arr[17].split(',').toString();
             String uid = arr1.split(':')[1].split(')')[0];
             print(uid);
-
-            // FirebaseFirestore.instance
-            //     .collection('users')
-            //     .doc(uid)
-            //     .get()
-            //     .then((DocumentSnapshot doc) {
-            //   print('---Data-----');
-            //   print(doc.data());
-            // });
             return MyHomePage();
           }
           return AuthScreen();

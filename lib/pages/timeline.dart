@@ -13,7 +13,6 @@ import '../widgets/header.dart' as head;
 
 import 'dart:convert';
 import 'EventDetail.dart';
-import '../widgets/post.dart';
 
 final FirebaseAuth auth = FirebaseAuth.instance;
 final User user = auth.currentUser;
@@ -69,8 +68,6 @@ class _TimelineState extends State<Timeline> with TickerProviderStateMixin {
     final FirebaseAuth auth = FirebaseAuth.instance;
     final User user = auth.currentUser;
     final pid = user.uid;
-    print('Hejan:$map');
-   // mapToList();
     setState(() {
       profileId = pid;
     });
@@ -94,25 +91,17 @@ class _TimelineState extends State<Timeline> with TickerProviderStateMixin {
   ));
 
   void mapToList() {
+    if (map == null) {
+      return;
+    }
     map.forEach((key, value) {
       if (value.toString() == 'true') {
         list.add(key);
       }
     });
-    print('Hum Yaha hai: $list');
   }
 
-  // fetchSubscribeList() async {
-  //   DocumentSnapshot result = await usersRef.doc(profileId).get();
-  //   //  map = await result.data()['subscribedTo'];
-  //   print('called subscribe list');
-  //   //await mapToList();
-  // }
-
   bool isOwner(String id) {
-    print('ID-------');
-    print('Current id: $profileId');
-    print(id);
     if (profileId == id) {
       return true;
     } else {
@@ -138,16 +127,11 @@ class _TimelineState extends State<Timeline> with TickerProviderStateMixin {
 
   Future<void> submit() async {
     _formKey.currentState.save();
-
-    //final dur = Duration(days: day, hours: hour, minutes: minute);
     try {
       setState(() {
         _isLoading = true;
       });
-      await FirebaseFirestore.instance.collection('privateEvent').doc()
-          // .collection('post')
-          // .doc()
-          .set({
+      await FirebaseFirestore.instance.collection('privateEvent').doc().set({
         'TimeStamp': Timestamp.now(),
         'Event': eventName,
         'Description': detail,
@@ -209,7 +193,6 @@ class _TimelineState extends State<Timeline> with TickerProviderStateMixin {
                           FocusScope.of(context).nextFocus(),
                       onSaved: (value) {
                         eventName = value;
-                        print('Event: $eventName');
                       }),
                   TextFormField(
                     decoration: const InputDecoration(
@@ -232,7 +215,6 @@ class _TimelineState extends State<Timeline> with TickerProviderStateMixin {
                     minLines: 1,
                     maxLines: 2,
                     onSubmitted: (value) {
-                      print('Detail: $detail');
                       detail = value;
                     },
                     onChanged: (value) {
@@ -243,8 +225,7 @@ class _TimelineState extends State<Timeline> with TickerProviderStateMixin {
                     type: DateTimePickerType.date,
                     dateMask: 'd MMM, yyyy',
                     controller: _controller1,
-                    //initialValue: _initialValue,
-                    firstDate: DateTime(2000),
+                    firstDate: DateTime.now(),
                     lastDate: DateTime(2100),
                     icon: Icon(Icons.event),
                     dateLabelText: 'Date',
@@ -260,11 +241,8 @@ class _TimelineState extends State<Timeline> with TickerProviderStateMixin {
                   DateTimePicker(
                     type: DateTimePickerType.time,
                     controller: _controller5,
-                    //initialValue: _initialValue,
                     icon: Icon(Icons.access_time),
                     timeLabelText: "Time",
-                    //use24HourFormat: false,
-                    //locale: Locale('en', 'US'),
                     onChanged: (val) => setState(() => _valueChanged2 = val),
                     validator: (val) {
                       setState(() => _valueToValidate2 = val);
@@ -279,7 +257,6 @@ class _TimelineState extends State<Timeline> with TickerProviderStateMixin {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(30.0))),
                     onPressed: () {
-                      print(eventName);
                       Navigator.pop(context);
                       _animationController.reverse();
                       submit();
@@ -302,7 +279,6 @@ class _TimelineState extends State<Timeline> with TickerProviderStateMixin {
 
   @override
   Widget build(context) {
-    //fetchSubscribeList();
     mapToList();
     return MaterialApp(
       home: DefaultTabController(
@@ -315,11 +291,10 @@ class _TimelineState extends State<Timeline> with TickerProviderStateMixin {
               tabs: [
                 Tab(
                   text: 'All Event',
-                  //icon: Icon(LineAwesomeIcons.list)
                 ),
                 Tab(
                   text: 'Your Remainder',
-                  // icon: Icon(LineAwesomeIcons.adjust)
+                  
                 )
               ],
             ),
@@ -357,7 +332,6 @@ class _TimelineState extends State<Timeline> with TickerProviderStateMixin {
                       builder: (ctx, streamSnapshot) {
                         if (streamSnapshot.connectionState ==
                             ConnectionState.waiting) {
-                          print('You are here');
                           return Center(
                             child: slider,
                           );
@@ -423,11 +397,6 @@ class _TimelineState extends State<Timeline> with TickerProviderStateMixin {
                                                         documents[index]
                                                             .documentID;
 
-                                                    print(documents[index]
-                                                        .documentID);
-
-                                                    // DocumentReference ref = FirebaseFirestore.instance.doc(documents[index].documentID);
-                                                    //print(ref.path);
                                                     deleteUser(1, docId);
                                                   },
                                                 ),
@@ -446,7 +415,6 @@ class _TimelineState extends State<Timeline> with TickerProviderStateMixin {
                               onTap: () {
                                 eveID = documents[index].documentID;
                                 title = documents[index]['Event'];
-                                print(eveID);
                                 Navigator.of(context).push(MaterialPageRoute(
                                     builder: (context) => EventDetail(
                                           eveId: eveID,
@@ -469,16 +437,13 @@ class _TimelineState extends State<Timeline> with TickerProviderStateMixin {
                           builder: (ctx, streamSnapshot) {
                             if (streamSnapshot.connectionState ==
                                 ConnectionState.waiting) {
-                              print('You are here');
                               return Center(
                                 child: slider,
                               );
                             }
 
                             final documents = streamSnapshot.data.documents;
-                            print(streamSnapshot.data.documents.length);
-                            // mapToList();
-                            print('iha:$map');
+                           
 
                             return ListView.builder(
                               itemCount: documents.length,
@@ -557,12 +522,6 @@ class _TimelineState extends State<Timeline> with TickerProviderStateMixin {
                                                                               index]
                                                                           .documentID;
 
-                                                                  print(documents[
-                                                                          index]
-                                                                      .documentID);
-
-                                                                  // DocumentReference ref = FirebaseFirestore.instance.doc(documents[index].documentID);
-                                                                  //print(ref.path);
                                                                   deleteUser(
                                                                       1, docId);
                                                                 },
@@ -584,7 +543,7 @@ class _TimelineState extends State<Timeline> with TickerProviderStateMixin {
                                   onTap: () {
                                     eveID = documents[index].documentID;
                                     title = documents[index]['Event'];
-                                    print(eveID);
+                                    
                                     Navigator.of(context)
                                         .push(MaterialPageRoute(
                                             builder: (context) => EventDetail(
@@ -605,7 +564,6 @@ class _TimelineState extends State<Timeline> with TickerProviderStateMixin {
                 builder: (ctx, streamSnapshot) {
                   if (streamSnapshot.connectionState ==
                       ConnectionState.waiting) {
-                    print('You are here');
                     return Center(
                       child: slider,
                     );
@@ -625,7 +583,6 @@ class _TimelineState extends State<Timeline> with TickerProviderStateMixin {
                   }
 
                   final documents = streamSnapshot.data.documents;
-                  print(streamSnapshot.data.documents.length);
 
                   return ListView.builder(
                     itemCount: documents.length,
@@ -657,12 +614,7 @@ class _TimelineState extends State<Timeline> with TickerProviderStateMixin {
                                       SizedBox(
                                         height: 5.0,
                                       ),
-                                      // Text(
-                                      //   documents[index]['Organiser'],
-                                      //   style: TextStyle(
-                                      //       fontSize: 20.0,
-                                      //       fontWeight: FontWeight.w400),
-                                      // ),
+                                      
                                       SizedBox(
                                         height: 5.0,
                                       ),
@@ -685,10 +637,6 @@ class _TimelineState extends State<Timeline> with TickerProviderStateMixin {
                                           String docId =
                                               documents[index].documentID;
 
-                                          print(documents[index].documentID);
-
-                                          // DocumentReference ref = FirebaseFirestore.instance.doc(documents[index].documentID);
-                                          //print(ref.path);
                                           deleteUser(2, docId);
                                         },
                                       ),
@@ -702,7 +650,6 @@ class _TimelineState extends State<Timeline> with TickerProviderStateMixin {
                         onTap: () {
                           eveID = documents[index].documentID;
                           title = documents[index]['Event'];
-                          print(eveID);
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) => PersonalEventInfo(
                                     eveId: documents[index].documentID,

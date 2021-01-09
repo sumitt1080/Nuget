@@ -52,7 +52,6 @@ class _ProfileState extends State<Profile> {
 
           if (snapshot.connectionState == ConnectionState.done) {
             Map<String, dynamic> data = snapshot.data.data();
-            //return Text("Event: ${data['Event']} ${data['Organiser']}");
             return SizedBox(
               width: MediaQuery.of(context).size.width,
               child: Card(
@@ -151,12 +150,7 @@ class _ProfileState extends State<Profile> {
                                               ),
                                             ),
                                             onPressed: () {
-                                              // print(current);
-                                              print("88888888888888888888" +
-                                                  profileid);
-                                              //print(username);
-                                              // print(
-                                              //     'name:${currentref.doc(profileid).collection('username')}');
+                                              
                                               Navigator.pop(context);
                                             },
                                           ),
