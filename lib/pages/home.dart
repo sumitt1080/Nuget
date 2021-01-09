@@ -28,6 +28,7 @@ class _MyHomePageState extends State<MyHomePage> {
   PageController pageController;
   int pageIndex = 0;
   String uniProfileType;
+  Map<String, dynamic> map;
 
   final slider = SleekCircularSlider(
       appearance: CircularSliderAppearance(
@@ -40,8 +41,6 @@ class _MyHomePageState extends State<MyHomePage> {
     pageController.dispose();
     super.dispose();
   }
-
-   
 
   onPageChanged(int pageIndex) {
     setState(() {
@@ -60,7 +59,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget buildNavBar(String type) {
     print('----buildNavBar------');
     print(type);
-    if (type == 'Club') {
+    if (uniProfileType == 'Club') {
       return CurvedNavigationBar(
           index: pageIndex,
           onTap: onTap,
@@ -101,19 +100,35 @@ class _MyHomePageState extends State<MyHomePage> {
     print('-=-=-navFunction-=-==-');
     print(type);
     List<Widget> l1 = [
-      Timeline(),
-      ActivityFeed(uniProfileType),
+      Timeline(
+        map: map,
+        type: uniProfileType,
+      ),
+      ActivityFeed(
+        profType: uniProfileType,
+        map: map,
+      ),
       Upload(),
-      ClubList(),
+      ClubList(
+        map: map,
+      ),
       Profile(),
     ];
     List<Widget> l2 = [
-      Timeline(),
-      ActivityFeed(uniProfileType),
-      ClubList(),
+      Timeline(
+        map: map,
+        type: uniProfileType,
+      ),
+      ActivityFeed(
+        profType: uniProfileType,
+        map: map,
+      ),
+      ClubList(
+        map: map,
+      ),
       Profile(),
     ];
-    if (type == 'Club') {
+    if (uniProfileType == 'Club') {
       return l1;
     } else {
       return l2;
@@ -131,11 +146,20 @@ class _MyHomePageState extends State<MyHomePage> {
         if (snapshot.connectionState == ConnectionState.active) {
           FloatingActionButton floatingActionButton;
 
-          if (snapshot.data == 'Club') {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: slider,
+            );
+          }
+
+          print('Here baby: ${uniProfileType}');
+
+          if (uniProfileType == 'Club') {
             uniProfileType = 'Club';
           } else {
             uniProfileType = 'Student';
           }
+          print(map);
 
           return Scaffold(
             //appBar: head.header(context, isAppTitle: false, titleText: 'Timeline'),
@@ -172,8 +196,9 @@ class _MyHomePageState extends State<MyHomePage> {
               .doc(user.uid)
               .get(),
         )
-        .map(
-          (doc) => doc.data()['profileType'],
-        );
+        .map((doc) {
+      uniProfileType = doc.data()['profileType'];
+      map = doc.data()['subscribedTo'];
+    });
   }
 }

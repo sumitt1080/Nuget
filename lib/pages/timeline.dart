@@ -20,14 +20,22 @@ final User user = auth.currentUser;
 final uid = user.uid;
 
 class Timeline extends StatefulWidget {
+  Timeline({this.map, this.type});
+  Map<String, dynamic> map;
+  String type;
   @override
-  _TimelineState createState() => _TimelineState();
+  _TimelineState createState() => _TimelineState(map: map, ptype: type);
 }
 
 class _TimelineState extends State<Timeline> with TickerProviderStateMixin {
+  _TimelineState({this.map, this.ptype});
+  Map<String, dynamic> map;
+  String ptype;
+
   CollectionReference eventref = FirebaseFirestore.instance.collection('event');
   CollectionReference perevent =
       FirebaseFirestore.instance.collection('privateEvent');
+  CollectionReference usersRef = FirebaseFirestore.instance.collection('users');
 
   final GlobalKey _refreshIndicatorKey = GlobalKey();
   String profileId;
@@ -54,11 +62,15 @@ class _TimelineState extends State<Timeline> with TickerProviderStateMixin {
   TextEditingController _controller5;
   TextEditingController _controller1;
 
+  List<String> list = new List();
+
   @override
   void initState() {
     final FirebaseAuth auth = FirebaseAuth.instance;
     final User user = auth.currentUser;
     final pid = user.uid;
+    print('Hejan:$map');
+   // mapToList();
     setState(() {
       profileId = pid;
     });
@@ -80,6 +92,22 @@ class _TimelineState extends State<Timeline> with TickerProviderStateMixin {
     spinnerMode: true,
     size: 50.0,
   ));
+
+  void mapToList() {
+    map.forEach((key, value) {
+      if (value.toString() == 'true') {
+        list.add(key);
+      }
+    });
+    print('Hum Yaha hai: $list');
+  }
+
+  // fetchSubscribeList() async {
+  //   DocumentSnapshot result = await usersRef.doc(profileId).get();
+  //   //  map = await result.data()['subscribedTo'];
+  //   print('called subscribe list');
+  //   //await mapToList();
+  // }
 
   bool isOwner(String id) {
     print('ID-------');
@@ -137,6 +165,14 @@ class _TimelineState extends State<Timeline> with TickerProviderStateMixin {
         _isLoading = false;
       });
       print(err);
+    }
+  }
+
+  containID(String cardID) {
+    if (list.contains(cardID)) {
+      return true;
+    } else {
+      return false;
     }
   }
 
@@ -256,29 +292,38 @@ class _TimelineState extends State<Timeline> with TickerProviderStateMixin {
         });
   }
 
+  isClub() {
+    if (ptype == 'Club') {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   @override
   Widget build(context) {
-    //getEvents();
+    //fetchSubscribeList();
+    mapToList();
     return MaterialApp(
       home: DefaultTabController(
         length: 2,
         child: Scaffold(
           appBar: AppBar(
-              flexibleSpace: SizedBox(),
-                title: Text('Timeline'),
-                bottom: TabBar(
-          tabs: [
-            Tab(
-            text: 'All Event',
-            //icon: Icon(LineAwesomeIcons.list)
+            flexibleSpace: SizedBox(),
+            title: Text('Timeline'),
+            bottom: TabBar(
+              tabs: [
+                Tab(
+                  text: 'All Event',
+                  //icon: Icon(LineAwesomeIcons.list)
+                ),
+                Tab(
+                  text: 'Your Remainder',
+                  // icon: Icon(LineAwesomeIcons.adjust)
+                )
+              ],
             ),
-            Tab(
-            text: 'Your Remainder',
-           // icon: Icon(LineAwesomeIcons.adjust)
-            )
-          ],
-                    ),
-              ),
+          ),
           backgroundColor: Color(0xFFfaf0e6),
           floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
           floatingActionButton: FloatingActionBubble(
@@ -304,115 +349,254 @@ class _TimelineState extends State<Timeline> with TickerProviderStateMixin {
           ),
           body: TabBarView(
             children: [
-              StreamBuilder(
-                stream: eventref.orderBy('Date', descending: true).snapshots(),
-                builder: (ctx, streamSnapshot) {
-                  if (streamSnapshot.connectionState ==
-                      ConnectionState.waiting) {
-                    print('You are here');
-                    return Center(
-                      child: slider,
-                    );
-                  }
+              isClub()
+                  ? (StreamBuilder(
+                      stream: eventref
+                          .where('Owner', isEqualTo: profileId)
+                          .snapshots(),
+                      builder: (ctx, streamSnapshot) {
+                        if (streamSnapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          print('You are here');
+                          return Center(
+                            child: slider,
+                          );
+                        }
+                        final documents = streamSnapshot.data.documents;
+                        return ListView.builder(
+                          itemCount: documents.length,
+                          itemBuilder: (ctx, index) => Container(
+                            padding: EdgeInsets.all(5),
+                            child: GestureDetector(
+                              child: InkWell(
+                                  child: Card(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10.0)),
+                                shadowColor: Color(0xFF848482),
+                                elevation: 10.0,
+                                child: Padding(
+                                  padding: EdgeInsets.all(12.0),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    children: <Widget>[
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            documents[index]['Event'],
+                                            style: TextStyle(
+                                                fontSize: 20.0,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          SizedBox(
+                                            height: 5.0,
+                                          ),
+                                          Text(
+                                            documents[index]['Organiser'],
+                                            style: TextStyle(
+                                                fontSize: 20.0,
+                                                fontWeight: FontWeight.w400),
+                                          ),
+                                          SizedBox(
+                                            height: 5.0,
+                                          ),
+                                          Text(
+                                            'On ${documents[index]['Date']} At ${documents[index]['Start Time']}',
+                                            style: TextStyle(
+                                                fontSize: 20.0,
+                                                fontWeight: FontWeight.w300),
+                                          ),
+                                        ],
+                                      ),
+                                      isOwner(documents[index]['Owner'])
+                                          ? Column(
+                                              children: [
+                                                FlatButton(
+                                                  child: Icon(
+                                                    Icons.delete,
+                                                    color: Colors.red,
+                                                  ),
+                                                  onPressed: () {
+                                                    String docId =
+                                                        documents[index]
+                                                            .documentID;
 
-                  final documents = streamSnapshot.data.documents;
-                  print(streamSnapshot.data.documents.length);
+                                                    print(documents[index]
+                                                        .documentID);
 
-                  return ListView.builder(
-                    itemCount: documents.length,
-                    itemBuilder: (ctx, index) => Container(
-                      padding: EdgeInsets.all(5),
-                      child: GestureDetector(
-                        child: InkWell(
-                          child: Card(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10.0)),
-                            shadowColor: Color(0xFF848482),
-                            elevation: 10.0,
-                            child: Padding(
-                              padding: EdgeInsets.all(12.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: <Widget>[
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        documents[index]['Event'],
-                                        style: TextStyle(
-                                            fontSize: 20.0,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      SizedBox(
-                                        height: 5.0,
-                                      ),
-                                      Text(
-                                        documents[index]['Organiser'],
-                                        style: TextStyle(
-                                            fontSize: 20.0,
-                                            fontWeight: FontWeight.w400),
-                                      ),
-                                      SizedBox(
-                                        height: 5.0,
-                                      ),
-                                      Text(
-                                        'On ${documents[index]['Date']} At ${documents[index]['Start Time']}',
-                                        style: TextStyle(
-                                            fontSize: 20.0,
-                                            fontWeight: FontWeight.w300),
-                                      ),
+                                                    // DocumentReference ref = FirebaseFirestore.instance.doc(documents[index].documentID);
+                                                    //print(ref.path);
+                                                    deleteUser(1, docId);
+                                                  },
+                                                ),
+                                              ],
+                                            )
+                                          : Column(),
+                                      Column(
+                                        children: [
+                                          Icon(Icons.notifications_active)
+                                        ],
+                                      )
                                     ],
                                   ),
-                                  isOwner(documents[index]['Owner'])
-                                      ? Column(
-                                          children: [
-                                            FlatButton(
-                                              child: Icon(
-                                                Icons.delete,
-                                                color: Colors.red,
-                                              ),
-                                              onPressed: () {
-                                                String docId =
-                                                    documents[index].documentID;
-
-                                                print(documents[index]
-                                                    .documentID);
-
-                                                // DocumentReference ref = FirebaseFirestore.instance.doc(documents[index].documentID);
-                                                //print(ref.path);
-                                                deleteUser(1, docId);
-                                              },
-                                            ),
-                                          ],
-                                        )
-                                      : Column(),
-                                  Column(
-                                    children: [
-                                      Icon(Icons.notifications_active)
-                                    ],
-                                  )
-                                ],
-                              ),
+                                ),
+                              )),
+                              onTap: () {
+                                eveID = documents[index].documentID;
+                                title = documents[index]['Event'];
+                                print(eveID);
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => EventDetail(
+                                          eveId: eveID,
+                                          title: title,
+                                        )));
+                              },
                             ),
                           ),
-                        ),
-                        onTap: () {
-                          eveID = documents[index].documentID;
-                          title = documents[index]['Event'];
-                          print(eveID);
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => EventDetail(
-                                    eveId: eveID,
-                                    title: title,
-                                  )));
-                        },
-                      ),
-                    ),
-                  );
-                },
-              ),
+                        );
+                      },
+                    ))
+                  : (list.isEmpty
+                      ? Center(
+                          child: Text('Not Subscribed To any Club'),
+                        )
+                      : StreamBuilder(
+                          stream: eventref
+                              .orderBy('Date', descending: true)
+                              .snapshots(),
+                          builder: (ctx, streamSnapshot) {
+                            if (streamSnapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              print('You are here');
+                              return Center(
+                                child: slider,
+                              );
+                            }
+
+                            final documents = streamSnapshot.data.documents;
+                            print(streamSnapshot.data.documents.length);
+                            // mapToList();
+                            print('iha:$map');
+
+                            return ListView.builder(
+                              itemCount: documents.length,
+                              itemBuilder: (ctx, index) => Container(
+                                padding: EdgeInsets.all(5),
+                                child: GestureDetector(
+                                  child: InkWell(
+                                      child: containID(
+                                              documents[index]['Owner'])
+                                          ? Card(
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          10.0)),
+                                              shadowColor: Color(0xFF848482),
+                                              elevation: 10.0,
+                                              child: Padding(
+                                                padding: EdgeInsets.all(12.0),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceAround,
+                                                  children: <Widget>[
+                                                    Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Text(
+                                                          documents[index]
+                                                              ['Event'],
+                                                          style: TextStyle(
+                                                              fontSize: 20.0,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                        ),
+                                                        SizedBox(
+                                                          height: 5.0,
+                                                        ),
+                                                        Text(
+                                                          documents[index]
+                                                              ['Organiser'],
+                                                          style: TextStyle(
+                                                              fontSize: 20.0,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400),
+                                                        ),
+                                                        SizedBox(
+                                                          height: 5.0,
+                                                        ),
+                                                        Text(
+                                                          'On ${documents[index]['Date']} At ${documents[index]['Start Time']}',
+                                                          style: TextStyle(
+                                                              fontSize: 20.0,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w300),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    isOwner(documents[index]
+                                                            ['Owner'])
+                                                        ? Column(
+                                                            children: [
+                                                              FlatButton(
+                                                                child: Icon(
+                                                                  Icons.delete,
+                                                                  color: Colors
+                                                                      .red,
+                                                                ),
+                                                                onPressed: () {
+                                                                  String docId =
+                                                                      documents[
+                                                                              index]
+                                                                          .documentID;
+
+                                                                  print(documents[
+                                                                          index]
+                                                                      .documentID);
+
+                                                                  // DocumentReference ref = FirebaseFirestore.instance.doc(documents[index].documentID);
+                                                                  //print(ref.path);
+                                                                  deleteUser(
+                                                                      1, docId);
+                                                                },
+                                                              ),
+                                                            ],
+                                                          )
+                                                        : Column(),
+                                                    Column(
+                                                      children: [
+                                                        Icon(Icons
+                                                            .notifications_active)
+                                                      ],
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
+                                            )
+                                          : SizedBox()),
+                                  onTap: () {
+                                    eveID = documents[index].documentID;
+                                    title = documents[index]['Event'];
+                                    print(eveID);
+                                    Navigator.of(context)
+                                        .push(MaterialPageRoute(
+                                            builder: (context) => EventDetail(
+                                                  eveId: eveID,
+                                                  title: title,
+                                                )));
+                                  },
+                                ),
+                              ),
+                            );
+                          },
+                        )),
               StreamBuilder(
                 stream: perevent
                     .orderBy('Date', descending: true)

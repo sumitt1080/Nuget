@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -19,6 +22,7 @@ class _AuthScreenState extends State<AuthScreen> {
     String email,
     String password,
     String username,
+    File image,
     String profileType,
     String clubName,
     bool isLogin,
@@ -35,12 +39,19 @@ class _AuthScreenState extends State<AuthScreen> {
           email: email,
           password: password,
         );
-      
       } else {
         authResult = await _auth.createUserWithEmailAndPassword(
           email: email,
           password: password,
         );
+
+        final ref = FirebaseStorage.instance
+            .ref()
+            .child('user_image')
+            .child(authResult.user.uid + '.jpg');
+
+        await ref.putFile(image).whenComplete(() => print('DONE'));
+        final url = await ref.getDownloadURL();
 
         await FirebaseFirestore.instance
             .collection('users')
@@ -51,11 +62,11 @@ class _AuthScreenState extends State<AuthScreen> {
           'profileType': profileType,
           'club': clubName,
           'SignUpDate': timestamp,
+          'image_url': url,
           'subscribedTo': {},
         });
-        
       }
-    }on PlatformException catch (err) {
+    } on PlatformException catch (err) {
       var message = 'An error occured, Please try Again';
 
       if (err.message != null) {

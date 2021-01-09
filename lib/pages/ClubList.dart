@@ -6,24 +6,29 @@ import 'package:flutter_svg/svg.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 
 import 'home.dart';
-import '../widgets/progress.dart';
+
 import '../widgets/header.dart' as head;
 
 class ClubList extends StatefulWidget {
+  ClubList({this.map, this.ptype});
+  Map<String, dynamic> map;
+  String ptype;
   @override
-  _ClubListState createState() => _ClubListState();
+  _ClubListState createState() => _ClubListState(list: map, ptype: ptype);
 }
 
 class _ClubListState extends State<ClubList> {
+  _ClubListState({this.list, this.ptype});
   String pid;
   Map<String, dynamic> list;
+  String ptype;
 
   @override
   void initState() {
     final FirebaseAuth auth = FirebaseAuth.instance;
     final User user = auth.currentUser;
     final uid = user.uid;
-    fetchSubscribeList();
+    //fetchSubscribeList();
     setState(() {
       pid = uid;
     });
@@ -41,8 +46,6 @@ class _ClubListState extends State<ClubList> {
     size: 50.0,
   ));
 
- 
-
   checkSubscribe(String cardID) {
     print('Value yaha: ${cardID}');
     if (list[cardID].toString() == 'true') {
@@ -52,10 +55,12 @@ class _ClubListState extends State<ClubList> {
     }
   }
 
-  fetchSubscribeList() async {
-    DocumentSnapshot result = await usersRef.doc(pid).get();
-    list = await result.data()['subscribedTo'];
-    
+  isClub() {
+    if (ptype == 'Club') {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   removeSubscribe(String cardID) async {
@@ -70,7 +75,7 @@ class _ClubListState extends State<ClubList> {
 
   @override
   Widget build(BuildContext context) {
-    fetchSubscribeList();
+    //fetchSubscribeList();
 
     //checkIfFollowing('fRKKGKIf8yfuZLInhqZRk8C7UyZ2');
     return Scaffold(
@@ -145,6 +150,11 @@ class _ClubListState extends State<ClubList> {
                                         onPressed: () {
                                           addSubscribe(
                                               documents[index].documentID);
+                                          setState(() {
+                                            list[documents[index]
+                                                          .documentID] =
+                                                      'true' as dynamic;
+                                          });
                                         },
                                       ),
                                     ),
@@ -163,7 +173,7 @@ class _ClubListState extends State<ClubList> {
                                                 removeSubscribe(documents[index]
                                                     .documentID);
                                                 setState(() {
-                                                  fetchSubscribeList();
+                                                  //fetchSubscribeList();
                                                   list[documents[index]
                                                           .documentID] =
                                                       'false' as dynamic;
@@ -183,7 +193,7 @@ class _ClubListState extends State<ClubList> {
                                                 addSubscribe(documents[index]
                                                     .documentID);
                                                 setState(() {
-                                                  fetchSubscribeList();
+                                                  //fetchSubscribeList();
                                                   list[documents[index]
                                                           .documentID] =
                                                       'true' as dynamic;

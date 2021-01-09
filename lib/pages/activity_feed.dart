@@ -16,16 +16,18 @@ final User user = auth.currentUser;
 final uid = user.uid;
 
 class ActivityFeed extends StatefulWidget {
-  ActivityFeed(this.profType);
+  ActivityFeed({this.profType, this.map});
   String profType;
+  Map<String, dynamic> map;
   @override
-  _ActivityFeedState createState() => _ActivityFeedState(profType);
+  _ActivityFeedState createState() => _ActivityFeedState(profType, map);
 }
 
 class _ActivityFeedState extends State<ActivityFeed>
     with TickerProviderStateMixin {
   String proftype;
-  _ActivityFeedState(this.proftype);
+  Map<String, dynamic> map;
+  _ActivityFeedState(this.proftype, this.map);
   CollectionReference infoEvent =
       FirebaseFirestore.instance.collection('infoPost');
 
@@ -37,6 +39,7 @@ class _ActivityFeedState extends State<ActivityFeed>
 
   final detailController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  List<String> list = new List();
   String profileId;
 
   String eveID;
@@ -78,6 +81,15 @@ class _ActivityFeedState extends State<ActivityFeed>
   String detail;
   String url;
   bool _isLoading = false;
+
+   void mapToList() {
+    map.forEach((key, value) {
+      if (value.toString() == 'true') {
+        list.add(key);
+      }
+    });
+    print('Hum Yaha hai: $list');
+  }
 
   _fetchClub() async {
     DocumentSnapshot result = await FirebaseFirestore.instance
@@ -228,6 +240,14 @@ class _ActivityFeedState extends State<ActivityFeed>
         .catchError((error) => print("Failed to delete user: $error"));
   }
 
+  containID(String cardID) {
+    if (list.contains(cardID)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     _fetchClub();
@@ -286,7 +306,7 @@ class _ActivityFeedState extends State<ActivityFeed>
               padding: EdgeInsets.all(5),
               child: GestureDetector(
                 child: InkWell(
-                  child: Card(
+                  child: containID(documents[index]['Owner']) ? Card(
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0)),
                     shadowColor: Color(0xFF848482),
@@ -344,7 +364,7 @@ class _ActivityFeedState extends State<ActivityFeed>
                         ],
                       ),
                     ),
-                  ),
+                  ) : SizedBox(),
                 ),
                 onTap: () {
                   eveID = documents[index].documentID;
