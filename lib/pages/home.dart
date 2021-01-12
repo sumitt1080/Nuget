@@ -1,7 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' hide User;
+import 'package:nuget/models/user.dart';
 import 'package:nuget/pages/activity_feed.dart';
 import 'package:nuget/pages/profile.dart';
 import 'package:nuget/pages/ClubList.dart';
@@ -12,10 +13,6 @@ import 'package:shifting_tabbar/shifting_tabbar.dart';
 import '../widgets/header.dart' as head;
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 
-final FirebaseAuth auth = FirebaseAuth.instance;
-final User user = auth.currentUser;
-final uid = user.uid;
-
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key}) : super(key: key);
 
@@ -24,12 +21,9 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  Stream<String> _stream;
+  Stream<User> _stream;
   PageController pageController;
   int pageIndex = 0;
-  String uniProfileType;
-  String uPt;
-  Map<String, dynamic> map;
 
   final slider = SleekCircularSlider(
       appearance: CircularSliderAppearance(
@@ -57,8 +51,8 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Widget buildNavBar(String type) {
-    if (uniProfileType == 'Club') {
+  Widget buildNavBar(User user) {
+    if (user.profileType == 'Club') {
       return CurvedNavigationBar(
           index: pageIndex,
           onTap: onTap,
@@ -95,37 +89,37 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  List<Widget> navFunctions(String type) {
+  List<Widget> navFunctions(User user) {
     List<Widget> l1 = [
       Timeline(
-        map: map,
-        type: uniProfileType,
+        map: user.subscribedTo,
+        type: user.profileType,
       ),
       ActivityFeed(
-        profType: uniProfileType,
-        map: map,
+        profType: user.profileType,
+        map: user.subscribedTo,
       ),
       Upload(),
       ClubList(
-        map: map,
+        map: user.subscribedTo,
       ),
       Profile(),
     ];
     List<Widget> l2 = [
       Timeline(
-        map: map,
-        type: uniProfileType,
+        map: user.subscribedTo,
+        type: user.profileType,
       ),
       ActivityFeed(
-        profType: uniProfileType,
-        map: map,
+        profType: user.profileType,
+        map: user.subscribedTo,
       ),
       ClubList(
-        map: map,
+        map: user.subscribedTo,
       ),
       Profile(),
     ];
-    if (uniProfileType == 'Club') {
+    if (user.profileType == 'Club') {
       return l1;
     } else {
       return l2;
@@ -137,7 +131,7 @@ class _MyHomePageState extends State<MyHomePage> {
     final appBar =
         head.header(context, isAppTitle: false, titleText: 'Timeline');
 
-    return StreamBuilder<String>(
+    return StreamBuilder<User>(
       stream: _stream,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.active) {
@@ -150,12 +144,13 @@ class _MyHomePageState extends State<MyHomePage> {
           }
 
 
-          if (uPt == 'Club') {
-            uniProfileType = 'Club';
-          } else {
-            uniProfileType = 'Student';
+          if (snapshot.data.profileType == 'Club') {
+            floatingActionButton = FloatingActionButton(
+              onPressed: () {},
+              child: Icon(Icons.add),
+            );
           }
-          
+
 
           return Scaffold(
             //appBar: head.header(context, isAppTitle: false, titleText: 'Timeline'),
@@ -165,7 +160,7 @@ class _MyHomePageState extends State<MyHomePage> {
               onPageChanged: onPageChanged,
               physics: NeverScrollableScrollPhysics(),
             ),
-            //floatingActionButton: floatingActionButton,
+            floatingActionButton: floatingActionButton,
             bottomNavigationBar: buildNavBar(snapshot.data),
           );
         } else {
@@ -192,17 +187,8 @@ class _MyHomePageState extends State<MyHomePage> {
               .doc(user.uid)
               .get(),
         )
-        .map((doc) {
-      setState(() {
-        uPt = doc.data()['profileType'];
-      });
-      map = doc.data()['subscribedTo'];
-    }
-            );
-
-
-    setState(() {
-      uniProfileType = uPt;
-    });
+        .map(
+          (doc) => User.fromMap(doc.data()),
+        );
   }
 }
