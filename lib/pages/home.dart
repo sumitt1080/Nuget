@@ -146,10 +146,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
 
           if (snapshot.data.profileType == 'Club') {
-            floatingActionButton = FloatingActionButton(
-              onPressed: () {},
-              child: Icon(Icons.add),
-            );
+            // floatingActionButton = FloatingActionButton(
+            //   onPressed: () {},
+            //   child: Icon(Icons.add),
+            // );
           }
 
 
