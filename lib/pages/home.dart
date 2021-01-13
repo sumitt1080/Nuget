@@ -12,6 +12,7 @@ import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 import 'package:shifting_tabbar/shifting_tabbar.dart';
 import '../widgets/header.dart' as head;
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:rxdart/rxdart.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key}) : super(key: key);
@@ -137,7 +138,7 @@ class _MyHomePageState extends State<MyHomePage> {
         if (snapshot.connectionState == ConnectionState.active) {
           FloatingActionButton floatingActionButton;
 
-          if (snapshot.connectionState == ConnectionState.waiting) {
+          if (!snapshot.hasData) {
             return Center(
               child: slider,
             );
@@ -181,11 +182,11 @@ class _MyHomePageState extends State<MyHomePage> {
     pageController = PageController();
     _stream = FirebaseAuth.instance
         .authStateChanges()
-        .asyncMap(
+        .switchMap(
           (user) => FirebaseFirestore.instance
               .collection('users')
               .doc(user.uid)
-              .get(),
+              .snapshots(),
         )
         .map(
           (doc) => User.fromMap(doc.data()),
