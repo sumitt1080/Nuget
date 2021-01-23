@@ -81,7 +81,8 @@ class _ActivityFeedState extends State<ActivityFeed>
   String url;
   bool _isLoading = false;
 
-   void mapToList() {
+  void mapToList() {
+    print(map);
     map.forEach((key, value) {
       if (value.toString() == 'true') {
         list.add(key);
@@ -103,8 +104,7 @@ class _ActivityFeedState extends State<ActivityFeed>
       setState(() {
         _isLoading = true;
       });
-      await FirebaseFirestore.instance.collection('infoPost').doc()
-          .set({
+      await FirebaseFirestore.instance.collection('infoPost').doc().set({
         'TimeStamp': Timestamp.now(),
         'Organiser': organiser,
         'Event': eventName,
@@ -238,6 +238,7 @@ class _ActivityFeedState extends State<ActivityFeed>
   @override
   Widget build(BuildContext context) {
     _fetchClub();
+    mapToList();
     return Scaffold(
       appBar: AppBar(
         title: Text('Feed'),
@@ -289,61 +290,63 @@ class _ActivityFeedState extends State<ActivityFeed>
               padding: EdgeInsets.all(5),
               child: GestureDetector(
                 child: InkWell(
-                  child: containID(documents[index]['Owner']) ? Card(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0)),
-                    shadowColor: Color(0xFF848482),
-                    elevation: 10.0,
-                    child: Padding(
-                      padding: EdgeInsets.all(12.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: <Widget>[
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                documents[index]['Event'],
-                                style: TextStyle(
-                                    fontSize: 20.0,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              SizedBox(
-                                height: 5.0,
-                              ),
-                              Text(
-                                documents[index]['Organiser'],
-                                style: TextStyle(
-                                    fontSize: 20.0,
-                                    fontWeight: FontWeight.w400),
-                              ),
-                              SizedBox(
-                                height: 5.0,
-                              ),
-                            ],
-                          ),
-                          isOwner(documents[index]['Owner'])
-                              ? Column(
+                  child: containID(documents[index]['Owner'])
+                      ? Card(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0)),
+                          shadowColor: Color(0xFF848482),
+                          elevation: 10.0,
+                          child: Padding(
+                            padding: EdgeInsets.all(12.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: <Widget>[
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    FlatButton(
-                                      child: Icon(
-                                        Icons.delete,
-                                        color: Colors.red,
-                                      ),
-                                      onPressed: () {
-                                        String docId =
-                                            documents[index].documentID;
-
-                                        deleteUser(docId);
-                                      },
+                                    Text(
+                                      documents[index]['Event'],
+                                      style: TextStyle(
+                                          fontSize: 20.0,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    SizedBox(
+                                      height: 5.0,
+                                    ),
+                                    Text(
+                                      documents[index]['Organiser'],
+                                      style: TextStyle(
+                                          fontSize: 20.0,
+                                          fontWeight: FontWeight.w400),
+                                    ),
+                                    SizedBox(
+                                      height: 5.0,
                                     ),
                                   ],
-                                )
-                              : Column(),
-                        ],
-                      ),
-                    ),
-                  ) : SizedBox(),
+                                ),
+                                isOwner(documents[index]['Owner'])
+                                    ? Column(
+                                        children: [
+                                          FlatButton(
+                                            child: Icon(
+                                              Icons.delete,
+                                              color: Colors.red,
+                                            ),
+                                            onPressed: () {
+                                              String docId =
+                                                  documents[index].documentID;
+
+                                              deleteUser(docId);
+                                            },
+                                          ),
+                                        ],
+                                      )
+                                    : Column(),
+                              ],
+                            ),
+                          ),
+                        )
+                      : SizedBox(),
                 ),
                 onTap: () {
                   eveID = documents[index].documentID;
