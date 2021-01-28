@@ -3,12 +3,12 @@
 [![Dart](https://img.shields.io/badge/-Dart-0175C2?style=flat&logo=dart&link=https://github.com/sumitt1080)](https://github.com/sumitt1080)
 [![Flutter](https://img.shields.io/badge/-Flutter-02569B?style=flat&logo=flutter&link=https://github.com/sumitt1080)](https://github.com/sumitt1080)
 
-Nuget is a complete Club-Management System made with Flutter
+**Nuget is a complete Club-Management System made with Flutter**
 ## Features
 * Dual Profile Sign in setup. <br>
   * Club<br>
   * Student<br>
-  The App UI will be built according to the user SignedIn/LoggedIn user. **Clubs** are having some admin functions.<br><br>
+  The App **UI** will be built according to the user SignedIn/LoggedIn user. **Clubs** are having some admin functions.<br><br>
 * **Personal Reminder** section for every type for user.
 * A **Club** can add a event with various details can post it, and only subscribed user will get to know this post.
 * A **Student** can subscribe to a **Club** and will get his timeline screen with events from subscribed Clubs.
