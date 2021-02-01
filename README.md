@@ -15,7 +15,7 @@
 * A **Club** can also add an informational post which will be shown to all users irrespective of subscription.<br>
 
 **Drop a ⭐ if you like this repo**<br>
-**----------------------------------------------------------------------------------------------------------------------------------------------------**
+**----------------------------------------------------------------------------------------------------------------------------------------**
 <br>
 ## Screenshots<br>
 ![Screenshot1](https://github.com/sumitt1080/Nuget/blob/master/screenshots/Screenshot_20210126-210117.jpg) &nbsp; ![Screenshot2](https://github.com/sumitt1080/Nuget/blob/master/screenshots/Screenshot_20210126-210450.jpg) &nbsp; ![Screenshot3](https://github.com/sumitt1080/Nuget/blob/master/screenshots/Screenshot_20210126-210457.jpg)<br>
